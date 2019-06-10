@@ -15,22 +15,40 @@
     <main>
         <div id="gameboard">
             <div id="totalbet">
-                <h2>Total Bet: <span id="betnum"></span></h2>
+                <h2>Total Bet: <span id="betnum">0</span></h2>
+            </div>
+
+            <div id="dealer">
+                <div class="dealercards" id="dealercard0"></div>
+                <div class="dealercards" id="dealercard1"></div>
+                <div class="dealercards" id="dealercard2"></div>
+                <div class="dealercards" id="dealercard3"></div>
+                <div class="dealercards" id="dealercard4"></div>
+            </div>
+
+            <div class="player" id="player0">
+                <div class="playercards" id="p0cards">
+                    player0 cards
+                </div>
+
+                <div class="playerfund" id="p0fund">
+                    p0fund
+                </div>
             </div>
 
             <div class="player" id="player1">
                 <div class="playercards" id="p1cards">
                     player1 cards
                 </div>
-
-                <div class="playerfund" id="p1fund">
                     p1fund
+                <div class="playerfund" id="p1fund">
+                    
                 </div>
             </div>
 
             <div class="player" id="player2">
                 <div class="playercards" id="p2cards">
-                    player2 cards
+                    player2 (gamer) cards
                 </div>
                     p2fund
                 <div class="playerfund" id="p2fund">
@@ -40,7 +58,7 @@
 
             <div class="player" id="player3">
                 <div class="playercards" id="p3cards">
-                    player3 (gamer) cards
+                    player3 cards
                 </div>
                     p3fund
                 <div class="playerfund" id="p3fund">
@@ -52,19 +70,9 @@
                 <div class="playercards" id="p4cards">
                     player4 cards
                 </div>
-                    p4fund
+
                 <div class="playerfund" id="p4fund">
-                    
-                </div>
-            </div>
-
-            <div class="player" id="player5">
-                <div class="playercards" id="p5cards">
-                    player5 cards
-                </div>
-
-                <div class="playerfund" id="p5fund">
-                    p5fund
+                    p4fund
                 </div>
             </div>
 
@@ -98,7 +106,7 @@
     </footer>
 
 
-
+    <script src="js/poker.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

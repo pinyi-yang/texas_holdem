@@ -25,14 +25,31 @@ main * {
 #totalbet {
     color: white;
     position: absolute;
-    left: 36.5%;
+    left: 34.5%;
     top: 12%;
 }
-
+#dealer {
+    position: absolute;
+    height:14%;
+    width: 28vw;
+    border: black solid 2px;
+    border-radius: 5px;
+    left: 29%;
+    top: 35%;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.dealercards{
+    height: 100%;
+    width: 16%;
+    border: black solid 1px;
+    background: rgba(199, 199, 199, 0.7);
+}
 .player {
     position: absolute;
-    height: 32%;
-    width: 13vw;
+    height: 28%;
+    width: 10vw;
     background: rgb(211, 210, 210);
     border: black solid 1px;
     border-radius: 5px;
@@ -40,28 +57,34 @@ main * {
 .playercards {
     height: 80%;
     border: black solid 1px;
+    text-align: center;
+}
+.playercards img {
+    width: 50%;
+    display: inline-block;
+    margin: auto -5%;
 }
 
-#player1 {
+#player0 {
     top: 1%;
     right: 12%;
 
 }
-#player2 {
+#player1 {
     top: 40%;
     right: 3%;
 }
-#player3 {
+#player2 {
     top: 55%;
     left: 39%;
 
 }
-#player4 {
+#player3 {
     top: 40%;
     left: 3%;
     
 }
-#player5 {
+#player4 {
     top: 1%;
     left: 10%;
 }
@@ -79,15 +102,19 @@ main * {
     font-size: 1.5vw;
     padding: 0.5vw 1.2vw;
     border-radius: 10px;
-    display: none
+    /* display: none; */
+}
+#betctldiv {
+    display: none;
 }
 #betctldiv button {
     font-size: 1.5vw;
     padding: 0.5vw 1.2vw;
     border-radius: 10px;
     margin: auto 0.8vw;
+}
+#resetctldiv {
     display: none;
-
 }
 #resetctldiv button {
     font-size: 1.5vw;
