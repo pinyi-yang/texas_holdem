@@ -4,10 +4,13 @@ var game;
 var backurl = "/img/back.png";
 
 
+
 //* DOM fields
 var totalBetEl = document.getElementById('betnum');
 var dealerBoardEl = document.getElementById('dealer');
 var playerCardsElArr = document.getElementsByClassName('playercards');
+var playerFundsElArr = document.getElementsByClassName('playerfund');
+
 
 //* buttons
 var startBtnEl = document.getElementById('startbtn');
@@ -31,11 +34,18 @@ continueBtnEl.addEventListener('click', nextTurn);
 //* functions
 //todo create a new game
 function newGame() {
-    game = new GameInfo();
-    console.log(game);
+    game = new PokerGame();
+    game.totalBetEl = totalBetEl;
+    // console.log(game);
     nextTurn();
     startBtnEl.style.display = 'none';
-    
+    //* initiate player fundsEl and cardsEl
+    for (let i = 0; i < game.players.length; i++) {
+        game.players[i].fundsEl = playerFundsElArr[i];
+        game.players[i].handsEl = playerCardsElArr[i];
+    }
+    game.updatePlayersFunds();
+    // console.log(game.players[2]);;
 }
 
 //todo: 1. clear totalbet; 2.clear dealercards;
@@ -46,21 +56,52 @@ function nextTurn() {
     dealerBoardEl.textContent = "";
     for (let playerhand of playerCardsElArr) {
         playerhand.textContent='';
-        console.log(playerhand);
+        // console.log(playerhand);
     }
     resetCtlDivEl.style.display = 'none';
     betCtlDivEl.style.display = 'block';
-    console.log(game.players.length);
+    // console.log(game.players.length);
     
     //* get cards from API and store in game object
-    // getCardsAPI();
+    fetch("https://deckofcardsapi.com/api/deck/new/draw/?count=" + (game.players.length * 2 + 5))
+        .then(function (responseData) {
+            console.log('get cards');
+            return responseData.json();
+        })
+        .then(function (jsonData) {
+            // console.log("cards are"); //* passed
+            // console.log(jsonData.cards); //* passed
+            //? 1. big blind and small blind 
+            //? 2. distribute card
+            game.startBlind(); //!delay 1600
+            game.allCards = jsonData.cards;
 
-    //? 1. big blind and small blind 
-    //? 2. distribute card
-    displayHandCards(backurl, backurl);
+            
+            setTimeout(loopDelayFunction, 2400);
+            //!total delay 6400
+            
+            // setTimeout(function() {
+            //     for (let i = 0; i < game.players.length; i++) {
+            //     game.players[i].hands = game.allCards.slice(2 * i, 2 * (i + 1));
+            //     game.players[i].showHands("img/back.png", "img/back.png");
+                // console.log(game.players[i].hands);
+                    //*passed
+            // }}, delay*4)
+            
+            game.dealercards = jsonData.cards.slice(10);
+            setTimeout(game.players[2].showHands, 7200);
+            console.log(game.dealercards);
+        });
+
+
+    // displayHandCards(backurl, backurl);
+    // for (let player of game.players) {
+    //     player.showHands(backurl, backurl);
+    // }
 
 }
 
+//! abandoned
 function displayHandCards(url0, url1) {
     console.log('distribute cards');
     for (let player of playerCardsElArr) {
@@ -92,4 +133,19 @@ function getCardsAPI() {
             game.dealercards = jsonData.cards.slice(10);
             console.log(game.dealercards);
         });
+}
+
+
+function loopDelayFunction() {
+    let j = 0;
+    for (i = 0; i < 5; i++) {
+        (function (i) {
+            setTimeout(function() {
+                console.log(j);
+                game.players[j].hands = game.allCards.slice(2 * j, 2 * (j + 1));
+                game.players[j].showHands("img/back.png", "img/back.png");
+                j++;
+            }, 800 * i);
+        })(i);
+    }
 }

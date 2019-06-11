@@ -48,8 +48,8 @@ main * {
 }
 .player {
     position: absolute;
-    height: 28%;
-    width: 10vw;
+    height: 22%;
+    width: 12vw;
     background: rgb(211, 210, 210);
     border: black solid 1px;
     border-radius: 5px;
@@ -60,9 +60,9 @@ main * {
     text-align: center;
 }
 .playercards img {
-    width: 50%;
+    width: 48%;
     display: inline-block;
-    margin: auto -5%;
+    margin: auto;
 }
 
 #player0 {
