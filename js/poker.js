@@ -41,10 +41,10 @@ class PokerGame {
         // console.log(this.bigBlindID,this.players[this.bigBlindID]);
         this.currentTotalBet +=1;
         console.log(this.currentTotalBet);
-        setTimeout(this.updateTotalBet, 500);
+        setTimeout(this.updateTotalBet, 800);
         
         
-        setTimeout(this.smallBind, 1000);
+        setTimeout(this.smallBind, 1600);
     }
 
 
