@@ -2,6 +2,7 @@
 var cardDrawsurl = "https://deckofcardsapi.com/api/deck/new/draw/?count=";
 var game;
 var backurl = "/img/back.png";
+var delay = 0;
 
 
 
@@ -60,6 +61,8 @@ function nextTurn() {
     }
     resetCtlDivEl.style.display = 'none';
     betCtlDivEl.style.display = 'block';
+    game.currentTurnIDArr = game.currentPlayerIDArr;
+    // console.log(game.currentTurnIDArr);
     // console.log(game.players.length);
     
     //* get cards from API and store in game object
@@ -71,15 +74,19 @@ function nextTurn() {
         .then(function (jsonData) {
             // console.log("cards are"); //* passed
             // console.log(jsonData.cards); //* passed
+            game.stageNum = 0;
             //? 1. big blind and small blind 
             //? 2. distribute card
             game.startBlind(); //!delay 1600
             game.allCards = jsonData.cards;
 
             
-            setTimeout(loopDelayFunction, 2400);
+            // setTimeout(loopDelayFunction, 2400);
+            setTimeout(function() {
+                loopDelayFunction(setCardBack, game.currentPlayerIDArr, 800);
+            }, 2400);
             //!total delay 6400
-            
+            delay = game.currentPlayerIDArr.length* 800 + 2400;
             // setTimeout(function() {
             //     for (let i = 0; i < game.players.length; i++) {
             //     game.players[i].hands = game.allCards.slice(2 * i, 2 * (i + 1));
@@ -89,8 +96,9 @@ function nextTurn() {
             // }}, delay*4)
             
             game.dealercards = jsonData.cards.slice(10);
-            setTimeout(game.players[2].showHands, 7200);
+            setTimeout(game.players[2].showCards, delay + 800);
             console.log(game.dealercards);
+            setTimeout(game.newTurn, delay + 1600);
         });
 
 
@@ -102,19 +110,19 @@ function nextTurn() {
 }
 
 //! abandoned
-function displayHandCards(url0, url1) {
-    console.log('distribute cards');
-    for (let player of playerCardsElArr) {
-        let card0 = document.createElement('img');
-        let card1 = document.createElement('img');
-        card0.src = url0;
-        card1.src = url1;
+// function displayHandCards(url0, url1) {
+//     console.log('distribute cards');
+//     for (let player of playerCardsElArr) {
+//         let card0 = document.createElement('img');
+//         let card1 = document.createElement('img');
+//         card0.src = url0;
+//         card1.src = url1;
         
-        player.appendChild(card0);
-        player.appendChild(card1);
-        console.log("player: " + player);
-    }
-}
+//         player.appendChild(card0);
+//         player.appendChild(card1);
+//         console.log("player: " + player);
+//     }
+// }
 
 function getCardsAPI() {
     fetch(cardDrawsurl + (game.players.length * 2 + 5))
@@ -132,20 +140,38 @@ function getCardsAPI() {
             }
             game.dealercards = jsonData.cards.slice(10);
             console.log(game.dealercards);
+            
         });
 }
+//! origin loop delay, replace by following
+// function loopDelayFunction() {
+//     let j = 0;
+//     for (i = 0; i < 5; i++) {
+//         (function (i) {
+//             setTimeout(function() {
+//                 console.log(j);
+//                 game.players[j].hands = game.allCards.slice(2 * j, 2 * (j + 1));
+//                 game.players[j].showHands("img/back.png", "img/back.png");
+//                 j++;
+//             }, 800 * i);
+//         })(i);
+//     }
+// }
 
+function loopDelayFunction(func, currIDArray, delay, j = 0) {
+    for (var i = 0; i < currIDArray.length; i++) {
+      (function (i) {
+        setTimeout(function () {
+          func(currIDArray[j]);
+          j++;
+        }, delay * i);
+      })(i);
+    };
+    return delay * currIDArray.length;
+  }
 
-function loopDelayFunction() {
-    let j = 0;
-    for (i = 0; i < 5; i++) {
-        (function (i) {
-            setTimeout(function() {
-                console.log(j);
-                game.players[j].hands = game.allCards.slice(2 * j, 2 * (j + 1));
-                game.players[j].showHands("img/back.png", "img/back.png");
-                j++;
-            }, 800 * i);
-        })(i);
-    }
-}
+  function setCardBack(j) {
+    game.players[j].hands = game.allCards.slice(2 * j, 2 * (j + 1));
+    game.players[j].showCards("img/back.png", "img/back.png");
+    j++;
+  }

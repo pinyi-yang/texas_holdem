@@ -4,9 +4,11 @@ class PokerGame {
         this.dealerCards;
         this.bigBlindID = 0;
         this.startBetID = 0;
-        this.quitPlayersID = [];
-        this.stageNum = 1;
-        this.currentBet;
+        this.currentID = 0;
+        this.currentPlayerIDArr = [0, 1, 2, 3, 4];
+        this.currentTurnIDArr = [];
+        this.stageNum = 0;
+        this.currentBet = 0; //! bet at current bet around
         this.currentTotalBet = 0;
         this.totalBetEl;
         this.players = (function(){
@@ -23,9 +25,95 @@ class PokerGame {
         this.startBlind = this.startBlind.bind(this);
         this.updateTotalBet = this.updateTotalBet.bind(this);
         this.smallBind = this.smallBind.bind(this);
+        this.nextStage = this.nextStage.bind(this);
     } //end of contributor
     
+    askForBet = () => {
+        if (this.currentID === this.startBetID) {
+            stageNum++;
+            this.nextStage();
+            return;
+        }
 
+        for (let i = 0; i < this.currentTurnIDArr.length; i++) {
+            if (this.currentID === 2) {
+                return;
+            }
+            let betOptionCtl = Math.random();
+            let player = this.players[this.currentID];
+            
+            //! 1. showHands, fold call
+            //! 2. update total bet and other necessary info
+            switch(true) {
+                //todo do nothing if a player show hand this turn.
+                case player.showhand: 
+                    break;
+                
+                //todo showhand or not;
+                case player.funds + player.playerBet < currentBet: 
+                    betOptionCtl > 0.5 ? player.showHands():player.fold();
+                    break;
+
+                //todo computer raise
+                case betOptionCtl > 0.9:
+                    let raise = Math.round(Math.random()*50) * 2
+                    while (raise > player.funds + player.playerBet - this.currentBet) {
+                        raise = Math.round(Math.random()*50) * 2
+                    }
+                    console.log('player raise ' + raise);
+                    let amount = raise + player.playerBet - this.currentBet;
+                    player.Bet(amount);
+                    this.currentBet += amount;
+                    this.startBetID = this.currentID;
+                    break;
+                
+                //todo computer fold    
+                case betOptionCtl < 0.1:
+                    player.fold();
+                    break;
+                
+                //todo computer call
+                default:
+                    player.call();
+
+            }
+        }
+
+    }
+
+    showDealerCard = () => {
+
+    }
+
+    getResults = () => {
+
+    }
+    
+    nextStage() {
+        this.currentBet = 0;
+
+        switch(this.stageNum) {
+            case 0:
+                askForBet();
+                break;
+            case 1:
+                showDealerCard();
+                askForBet();
+                break
+            case 2:
+                showDealerCard();
+                askForBet();
+                break;
+            case 3:
+                showDealerCard();
+                getResults();
+                break;        
+        }
+        if (this.currentID === this.startBetID) {
+            this.stageNum++;
+            return;
+        }
+    }
     updatePlayersFunds() {
         for (let i = 0; i < this.players.length; i++) {
             this.players[i].fundsEl.textContent = '$ ' + this.players[i].funds;
@@ -37,10 +125,17 @@ class PokerGame {
     }
 
     startBlind() {
-        this.players[this.bigBlindID].Bet(1);
+        if (this.currentPlayerIDArr.includes(this.bigBlindID)) {
+            this.players[this.bigBlindID].Bet(1);
+        } else {
+            this.bigBlindID +=1;
+            this.startBlind();
+            return;
+        }
+        
         // console.log(this.bigBlindID,this.players[this.bigBlindID]);
         this.currentTotalBet +=1;
-        console.log(this.currentTotalBet);
+        // console.log(this.currentTotalBet);
         setTimeout(this.updateTotalBet, 800);
         
         
@@ -49,17 +144,27 @@ class PokerGame {
 
 
     smallBind() {
-        if (this.bigBlindID + 1 >= 5) {
-            this.bigBlindID = 0;
-            this.players[this.bigBlindID].Bet(2);
-        }
-        else {
-            this.bigBlindID++;
-            this.players[this.bigBlindID].Bet(2);
-            this.currentBet = 2;
-        }
+        this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
+        console.log(this.bigBlindID);
+        this.players[this.bigBlindID].Bet(2);
+        this.currentBet = 2;
         this.currentTotalBet += 2;
         this.updateTotalBet();
+    }
+
+    getNextPlayerID(IDArr, ID) {
+        let id = IDArr.indexOf(ID);
+        if (id + 1 >= IDArr.length) {
+            id = 0;
+        }
+        else {
+            id++;
+        }
+        return IDArr[id];
+    }
+    
+    takePlayerIDOut(IDArr, ID) {
+
     }
 }
 
@@ -74,8 +179,9 @@ class PokerPlayer {
         this.betAtSH = 0;
         this.playerBet = 0;
         this.img;
-        this.showHands = this.showHands.bind(this);
+        // this.showHands = this.showHands.bind(this);
         this.playerBet = this.Bet.bind(this);
+        this.showCards = this.showCards.bind(this);
     }
 
     Bet(bet) {
@@ -84,7 +190,7 @@ class PokerPlayer {
         this.fundsEl.textContent = '$ ' + this.funds;
     }
 
-    showHands(url0 = this.hands[0].image, url1 = this.hands[1].image) {
+    showCards(url0 = this.hands[0].image, url1 = this.hands[1].image) {
         this.handsEl.textContent = "";
         let card0 = document.createElement('img');
         let card1 = document.createElement('img');
@@ -95,6 +201,19 @@ class PokerPlayer {
         this.handsEl.appendChild(card1);
         // console.log("player: " + this.handsEl);
     }
+
+    showHands = () => {
+
+    }
+
+    fold = () => {
+
+    }
+
+    call = () => {
+
+    }
+
 
    
 }
