@@ -4,6 +4,7 @@ class PokerGame {
         this.dealerCards;
         this.bigBlindID = 0;
         this.startBetID = 0;
+        this.lastID = 4;
         this.currentID = 0;
         this.currentPlayerIDArr = [0, 1, 2, 3, 4];
         this.currentTurnIDArr = [];
@@ -29,55 +30,27 @@ class PokerGame {
     } //end of contributor
     
     askForBet = () => {
-        if (this.currentID === this.startBetID) {
-            stageNum++;
-            this.nextStage();
-            return;
-        }
+        
 
         for (let i = 0; i < this.currentTurnIDArr.length; i++) {
             if (this.currentID === 2) {
+                this.lastID = this.currentID;
+                this.currentID = this.getNextPlayerID(this.currentPlayerIDArr, this.currentID);
+                console.log(this.currentID + " after 2?");
                 return;
             }
-            let betOptionCtl = Math.random();
-            let player = this.players[this.currentID];
+            this.computerBet(this.players[this.currentID]);
+            this.lastID = this.currentID;
+            this.currentID = this.getNextPlayerID(this.currentPlayerIDArr, this.currentID);
             
-            //! 1. showHands, fold call
-            //! 2. update total bet and other necessary info
-            switch(true) {
-                //todo do nothing if a player show hand this turn.
-                case player.showhand: 
-                    break;
-                
-                //todo showhand or not;
-                case player.funds + player.playerBet < currentBet: 
-                    betOptionCtl > 0.5 ? player.showHands():player.fold();
-                    break;
-
-                //todo computer raise
-                case betOptionCtl > 0.9:
-                    let raise = Math.round(Math.random()*50) * 2
-                    while (raise > player.funds + player.playerBet - this.currentBet) {
-                        raise = Math.round(Math.random()*50) * 2
-                    }
-                    console.log('player raise ' + raise);
-                    let amount = raise + player.playerBet - this.currentBet;
-                    player.Bet(amount);
-                    this.currentBet += amount;
-                    this.startBetID = this.currentID;
-                    break;
-                
-                //todo computer fold    
-                case betOptionCtl < 0.1:
-                    player.fold();
-                    break;
-                
-                //todo computer call
-                default:
-                    player.call();
-
+            if (this.currentID === this.startBetID) {
+                stageNum++;
+                this.nextStage();
+                return;
             }
         }
+        
+        
 
     }
 
@@ -89,6 +62,43 @@ class PokerGame {
 
     }
     
+    computerBet = (player) => {
+        let betOptionCtl = Math.random();
+        //! 1. showHands, fold call
+        //! 2. update total bet and other necessary info
+        switch (true) {
+            //todo do nothing if a player showed hand this turn.
+            case player.showhand:
+                break;
+
+            //todo showhand or not; 1. showHands 2. fold
+            //? showhands: 1. take player out of currentTurn 2. 
+            case player.funds + player.playerBet < currentBet:
+                betOptionCtl > 0.5 ? player.showHands() : player.Fold();
+                break;
+
+            //todo computer raise
+            case betOptionCtl > 0.9:
+                let raise = Math.round(Math.random() * 50) * 2;
+                while (raise > player.funds + player.playerBet - this.currentBet) {
+                    raise = Math.round(Math.random() * 50) * 2;
+                }
+                console.log('player raise ' + raise);
+                let amount = raise + player.playerBet - this.currentBet;
+                player.Bet(amount);
+                this.currentBet += amount;
+                this.startBetID = this.currentID;
+                break;
+            //todo computer fold    
+            case betOptionCtl < 0.1:
+                player.Fold();
+                break;
+            //todo computer call
+            default:
+                player.Call();
+        }
+    }
+
     nextStage() {
         this.currentBet = 0;
 
@@ -203,14 +213,15 @@ class PokerPlayer {
     }
 
     showHands = () => {
+        //? update player.showhand, update playerBet
 
     }
 
-    fold = () => {
+    Fold = () => {
 
     }
 
-    call = () => {
+    Call = () => {
 
     }
 
