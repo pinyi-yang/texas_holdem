@@ -74,7 +74,10 @@ function nextTurn() {
         .then(function (jsonData) {
             // console.log("cards are"); //* passed
             // console.log(jsonData.cards); //* passed
+            
+            //todo initiate game variable for each turn
             game.stageNum = 0;
+            game.currentTurnIDArr = game.currentPlayerIDArr;
             //? 1. big blind and small blind 
             //? 2. distribute card
             game.startBlind(); //!delay 1600
@@ -96,9 +99,20 @@ function nextTurn() {
             // }}, delay*4)
             
             game.dealercards = jsonData.cards.slice(10);
-            setTimeout(game.players[2].showCards, delay + 800);
+            setTimeout(function() {
+                game.players[2].showCards;
+                game.initIndex();
+            }, delay + 800);
             console.log(game.dealercards);
-            setTimeout(game.newTurn, delay + 1600);
+            // setTimeout(game.newTurn, delay + 1600);
+
+            //? player from currrentplayer start bet
+            console.log('total delay ' + (delay + 1600));
+            setTimeout(function() {
+                loopDelayFunction2(game.askPlayerBet);
+            }, delay + 1600);
+
+
         });
 
 
@@ -166,8 +180,19 @@ function loopDelayFunction(func, currIDArray, delay, j = 0) {
           j++;
         }, delay * i);
       })(i);
-    };
+    } ;
     return delay * currIDArray.length;
+  }
+
+  function loopDelayFunction2(func, Arr) {
+    for (var i = 0; i < game.currentTurnIDArr.length; i++) {
+      (function (i) {
+        setTimeout(function () {
+            console.log('hi');
+            func();        
+        }, 1000 * i);
+      })(i);
+    } ;
   }
 
   function setCardBack(j) {
