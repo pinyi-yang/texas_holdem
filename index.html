@@ -50,6 +50,7 @@
             </div>
 
             <div class="player" id="player2">
+                    <div class="msg msggamer">gamer msg</div>
                 <div class="playercards" id="p2cards">
                     player2 (gamer) cards
                 </div>
@@ -86,13 +87,20 @@
                     <button id="startbtn">START</button>
                 </div>
 
-                <div id="betctldiv">
+                <div id="betctldiv" class = 'hidden'>
+                    <div class="scalediv hidden">
+                        <div id="scalevalue">Value: 0</div>
+                        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                    </div>
+                    <div>
                         <button id="foldbtn">FOLD</button>
                         <button id="callbtn">CALL</button>
-                        <button id="raisebtn">RAISE</button>
+                        <button id="showscale">Raise</button>
+                        <button id="raisebtn" class = 'hidden'>RAISE</button>
+                    </div>
                 </div>
                 
-                <div id="resetctldiv">
+                <div id="resetctldiv" class = 'hidden'>
                     <button id="continuebtn">CONTINUE</button>
                     <button id="endbtn">END GAME</button>
                 </div>

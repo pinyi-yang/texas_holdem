@@ -48,17 +48,13 @@ main * {
     background-repeat: no-repeat;
     
 }
-.dealercards img:nth-child(3) {
+.dealercards img {
     position: absolute;
     height: 100%;
     animation: rotate 1s linear;
     animation-fill-mode: forwards;
 }
-.dealercards img:first-child {
 
-    animation: flash 0.3s step-end;
-    animation-fill-mode: forwards;
-}
 .player {
     position: absolute;
     height: 22%;
@@ -82,6 +78,10 @@ main * {
 .msgleft {
     top: -23%;
     right: -43%;
+}
+.msggamer {
+    top: -23%;
+    left: -26%;
 }
 
 .playercards {
@@ -127,15 +127,19 @@ main * {
     margin: 0 auto;
     text-align: center;
 }
+.hidden {
+    display: none;
+}
 
 #startbtn {
+    /* display: none; */
     font-size: 1.5vw;
     padding: 0.5vw 1.2vw;
     border-radius: 10px;
-    /* display: none; */
 }
+
 #betctldiv {
-    display: none;
+    /* border: black solid 2px; */
 }
 #betctldiv button {
     font-size: 1.5vw;
@@ -143,8 +147,20 @@ main * {
     border-radius: 10px;
     margin: auto 0.8vw;
 }
+.scalediv {
+    position: absolute;
+    top: -15%;
+    right: -50%;
+}
+#scalevalue {
+    color: white;
+    font-weight: bold;
+    text-align: left;
+}
+#myRange {
+    width: 15vw;
+}
 #resetctldiv {
-    display: none;
 }
 #resetctldiv button {
     font-size: 1.5vw;
@@ -155,10 +171,10 @@ main * {
 
 @keyframes rotate {
     0% {
-        transform: rotateY(0turn);
+        transform: rotateY(0.75turn);
     }
     100% {
-        transform: rotateY(0.5turn);
+        transform: rotateY(1turn);
     }
 }
 

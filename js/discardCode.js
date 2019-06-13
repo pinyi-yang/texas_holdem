@@ -105,7 +105,7 @@ askPlayerBet = () => {
     }
 
     // let id = this.currentTurnIDArr[turnCurrIndex];
-    console.log('ask player' + id);
+    console.log('waiting for player' + id);
     //? get to gamer, stop. game will control by buttons
     if (id === 2) {
         this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
@@ -117,8 +117,42 @@ askPlayerBet = () => {
     if (this.players[id].showhand) {
         this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
     }
-    console.log('computer' + id + "'s turn.");
+    console.log('computer' + id + " decided.");
     this.computerBet(this.players[id]);
     this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
                  
 } // end of askPlayerBet
+
+askAPlayer = (intervalHandle, turnCurrIndex, turnEndIndex) => {
+    let id = this.currentTurnIDArr[turnCurrIndex];
+    console.log('hi player' + id);
+    
+    //? end of stage, all players finish bet 
+    if (turnCurrIndex === turnEndIndex) {
+        clearInterval(intervalHandle);
+        this.stageNum++;
+        this.currStageSHPlayers = [];
+        this.nextStage();
+        return turnCurrIndex;
+    }
+
+    // let id = this.currentTurnIDArr[turnCurrIndex];
+    console.log('ask player' + id);
+    //? get to gamer, stop. game will control by buttons
+    if (id === 2) {
+        clearInterval(intervalHandle);
+        turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
+        console.log("gamer's turn");
+        return turnCurrIndex;
+    }
+    //? not gamer, computer will play
+    //? don't do anything if player showHand
+    if (this.players[id].showhand) {
+        turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
+        return turnCurrIndex;
+    }
+    console.log('computer' + id + "'s turn.");
+    this.computerBet(this.players[id]);
+    turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
+    return turnCurrIndex;
+}
