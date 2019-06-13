@@ -1,7 +1,26 @@
-var a = [1,2,3,4,5];
-a.splice(1,1);
-console.log(a);
+var num = 2;
 
+function add() {
+    num++;
+}
+
+add();
+console.log(num);
+
+
+//*below passed
+// function sayHi(n) {
+//     if (n === 10) {
+//         return;
+//     }
+
+//     setTimeout(function() {
+//         console.log(n + ' say hi!');
+//     }, n*2000);
+//     return sayHi(n+1);
+// }
+
+// sayHi(1);
 
 // print = (j) => {
 //   console.log(a[j]);

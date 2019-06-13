@@ -11,7 +11,7 @@ var totalBetEl = document.getElementById('betnum');
 var dealerBoardEl = document.getElementById('dealer');
 var playerCardsElArr = document.getElementsByClassName('playercards');
 var playerFundsElArr = document.getElementsByClassName('playerfund');
-
+var playerMsgElArr = document.getElementsByClassName('msg');
 
 //* buttons
 var startBtnEl = document.getElementById('startbtn');
@@ -44,6 +44,7 @@ function newGame() {
     for (let i = 0; i < game.players.length; i++) {
         game.players[i].fundsEl = playerFundsElArr[i];
         game.players[i].handsEl = playerCardsElArr[i];
+        game.players[i].msgEl = playerMsgElArr[i];
     }
     game.updatePlayersFunds();
     // console.log(game.players[2]);;
@@ -100,22 +101,23 @@ function nextTurn() {
             
             game.dealercards = jsonData.cards.slice(10);
             setTimeout(function() {
-                game.players[2].showCards;
-                game.initIndex();
+                console.log('show gamer hand');
+                game.players[2].showCards();
             }, delay + 800);
             console.log(game.dealercards);
             // setTimeout(game.newTurn, delay + 1600);
 
             //? player from currrentplayer start bet
             console.log('total delay ' + (delay + 1600));
+            console.log(game.dealercards);
             setTimeout(function() {
-                loopDelayFunction2(game.askPlayerBet);
+                nextStage();
+                console.log('current stage is ' + game.stageNum);
             }, delay + 1600);
-
-
         });
-
-
+        // .then(function(game) {
+        //     console.log('next stage is ' + game.stageNum);
+        // });
     // displayHandCards(backurl, backurl);
     // for (let player of game.players) {
     //     player.showHands(backurl, backurl);
@@ -184,19 +186,109 @@ function loopDelayFunction(func, currIDArray, delay, j = 0) {
     return delay * currIDArray.length;
   }
 
-  function loopDelayFunction2(func, Arr) {
+function loopDelayFunction2(func, Arr) {
     for (var i = 0; i < game.currentTurnIDArr.length; i++) {
-      (function (i) {
+        (function (i) {
         setTimeout(function () {
             console.log('hi');
             func();        
-        }, 1000 * i);
-      })(i);
-    } ;
-  }
+            }, 1000 * i);
+        })(i);
+    };
+}
 
-  function setCardBack(j) {
+function setCardBack(j) {
     game.players[j].hands = game.allCards.slice(2 * j, 2 * (j + 1));
     game.players[j].showCards("img/back.png", "img/back.png");
     j++;
-  }
+}
+
+function nextStage () {
+    if (game.stageNum !== 0) {
+        game.currentBet = 0;
+    }
+    //? if real person fold or sh hand last stage end turn immediately
+    //! necessary?
+    // if ((!game.currentTurnIDArr.includes(2)) || player.showhand === true) {
+    //     game.showDealerCard();
+    //     game.getResults()
+    //     game.endTurn()
+    //     console.log('game turn end due to only gamer is inactive.');
+    // }
+    
+    game.initTurnIndex();
+    console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
+
+    switch(game.stageNum) {
+        case 0:
+            console.log('After get hand cards. Start Bet');
+            // askForBet();
+            askNextPlayerBet(); //! at the very end.
+            break;
+        case 1:
+            console.log('Show flop cards. Start bet');
+            game.showDealerCard();
+            // askForBet();
+            askNextPlayerBet();
+            break
+        case 2:
+            console.log('Show turn card. Start bet');
+            game.showDealerCard();
+            // askForBet();
+            askNextPlayerBet();
+            break;
+        case 3:
+            console.log('Show river card. Start bet');
+            game.showDealerCard();
+            askNextPlayerBet();
+            break;        
+        case 4:
+            console.log('Show cards in hand. End turn');
+            game.getResults();
+            game.endTurn();
+            game.stageNum = 0;
+            return;
+    }
+    // if (this.currentID === this.startBetID) {
+    //     this.stageNum++;
+    //     return;
+    // }
+}
+
+function askNextPlayerBet(delaycounter = 1) {
+    let id = game.currentTurnIDArr[game.turnCurrIndex]
+    console.log('hi player' + id);
+
+    //? end of stage, all players finish bet 
+    if (game.turnCurrIndex === game.turnEndIndex) {
+        game.stageNum++;
+        game.currStageSHPlayers = [];
+        setTimeout(game.nextStage, 1500);
+    }
+
+    // let id = game.currentTurnIDArr[turnCurrIndex];
+    //? get to gamer, stop. game will control by buttons
+    if (id === 2) {
+        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+        console.log("gamer's turn");
+        return;
+    }
+    //? not gamer, computer will play
+    //? don't do anything if player showHand
+    setTimeout(function() {
+        console.log('ask player' + id);
+        if (game.players[id].showhand) {
+        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+        }
+        console.log('computer' + id + "'s turn.");
+        game.computerBet(game.players[id]);
+        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+        console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
+        return askNextPlayerBet(delaycounter++);
+    }, 5000 * delaycounter);
+
+    
+}
+function increaseStage() {
+    game.stageNum++;
+}

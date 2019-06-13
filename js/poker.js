@@ -31,8 +31,37 @@ class PokerGame {
         this.startBlind = this.startBlind.bind(this);
         this.updateTotalBet = this.updateTotalBet.bind(this);
         this.smallBind = this.smallBind.bind(this);
-        this.nextStage = this.nextStage.bind(this);
     } //end of contributor
+    
+    startBlind = () => {
+        if (this.currentPlayerIDArr.includes(this.bigBlindID)) {
+            this.players[this.bigBlindID].Bet(1);
+        } else {
+            this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
+            this.startBlind();
+            return;
+        }
+        
+        // console.log(this.bigBlindID,this.players[this.bigBlindID]);
+        this.pot +=1;
+        // console.log(this.currentTotalBet);
+        setTimeout(this.updateTotalBet, 800);
+        
+        
+        setTimeout(this.smallBind, 1600);
+        
+    }
+
+
+    smallBind = () => {
+        this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
+        console.log(this.bigBlindID);
+        this.players[this.bigBlindID].Bet(2);
+        this.currentBet = 2;
+        this.pot += 2;
+        this.updateTotalBet();
+        console.log('after blind, current bet is' + this.currentBet);
+    }    
     
     //* get bet end index in cuurentTurnIDArr
     getEndIndex = (startIndex) => {
@@ -41,49 +70,10 @@ class PokerGame {
 
     
 
-    askForBet = () => {
-        //! no check showhand and fold. will check when each player showhand or fold
-        
-        //? get index at currentTurnIDArr
-        var turnStartIndex = this.currentTurnIDArr.indexOf(this.startBetID);
-        var turnEndIndex;
-        var turnCurrIndex = turnStartIndex;
-        
-        turnEndIndex = this.getEndIndex(turnStartIndex);
-        console.log('start ask for bet from player' + turnStartIndex + ' to player' + turnEndIndex);
-
-        for (let i = 0; i < this.currentTurnIDArr.length; i++) {
-            let id = this.currentTurnIDArr[turnCurrIndex]
-            console.log('hi player' + id);
-            
-            //? end of stage, all players finish bet 
-            if (turnCurrIndex === turnEndIndex) {
-                this.stageNum++;
-                this.currStageSHPlayers = [];
-                this.nextStage();
-            }
-
-            // let id = this.currentTurnIDArr[turnCurrIndex];
-            console.log('ask player' + id);
-            //? get to gamer, stop. game will control by buttons
-            if (id === 2) {
-                turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
-                console.log("gamer's turn");
-                return;
-            }
-            //? not gamer, computer will play
-            //? don't do anything if player showHand
-            if (this.players[id].showhand) {
-                turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
-                return;
-            }
-            console.log('computer' + id + "'s turn.");
-            this.computerBet(this.players[id]);
-            turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
-        }              
-    } // end of askforbet
     
-    initIndex = () => {
+    
+
+    initTurnIndex = () => {
         //! no check showhand and fold. will check when each player showhand or fold
         
         //? get index at currentTurnIDArr
@@ -93,37 +83,6 @@ class PokerGame {
         this.turnEndIndex = this.getEndIndex(this.turnStartIndex);
         console.log('start ask for bet from player' + this.turnStartIndex + ' to player' + this.turnEndIndex);
     }
-    askPlayerBet = () => {
-        let id = this.currentTurnIDArr[this.turnCurrIndex]
-        console.log('hi player' + id);
-        
-        //? end of stage, all players finish bet 
-        if (this.turnCurrIndex === this.turnEndIndex) {
-            this.stageNum++;
-            this.currStageSHPlayers = [];
-            this.nextStage();
-        }
-
-        // let id = this.currentTurnIDArr[turnCurrIndex];
-        console.log('ask player' + id);
-        //? get to gamer, stop. game will control by buttons
-        if (id === 2) {
-            this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
-            console.log("gamer's turn");
-            return;
-        }
-        //? not gamer, computer will play
-        //? don't do anything if player showHand
-        if (this.players[id].showhand) {
-            this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
-        }
-        console.log('computer' + id + "'s turn.");
-        this.computerBet(this.players[id]);
-        this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
-                     
-    } // end of askPlayerBet
-
-
 
     showDealerCard = () => {
 
@@ -219,7 +178,8 @@ class PokerGame {
         player.fold = true;
 
         //* take player out
-        this.currentTurnIDArr.splice(id, 1);
+        this.currentTurnIDArr.splice(this.currentTurnIDArr.indexOf(id), 1);
+        console.log('current players are ' + this.currentTurnIDArr);
         this.updateSHPlayerPot(0);
 
         this.endTurnEarlyOrNot();
@@ -248,39 +208,7 @@ class PokerGame {
     }
 
 
-    nextStage = () => {
-        this.currentBet = 0;
-
-        //? if real person fold or sh hand last stage end turn immediately
-        if ((!currentTurnIDArr.includes(2)) || player.showhand === true) {
-            this.showDealerCard();
-            this.getResults()
-            this.endTurn()
-            console.log('this turn end due to only gamer is inactive.');
-        }
-
-        switch(this.stageNum) {
-            case 0:
-                askForBet();
-                break;
-            case 1:
-                showDealerCard();
-                askForBet();
-                break
-            case 2:
-                showDealerCard();
-                askForBet();
-                break;
-            case 3:
-                showDealerCard();
-                getResults();
-                break;        
-        }
-        // if (this.currentID === this.startBetID) {
-        //     this.stageNum++;
-        //     return;
-        // }
-    }
+    
     updatePlayersFunds = () => {
         for (let i = 0; i < this.players.length; i++) {
             this.players[i].fundsEl.textContent = '$ ' + this.players[i].funds;
@@ -292,35 +220,7 @@ class PokerGame {
         this.totalBetEl.textContent = '$ ' + this.pot;
     }
 
-    startBlind = () => {
-        if (this.currentPlayerIDArr.includes(this.bigBlindID)) {
-            this.players[this.bigBlindID].Bet(1);
-        } else {
-            this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
-            this.startBlind();
-            return;
-        }
-        
-        // console.log(this.bigBlindID,this.players[this.bigBlindID]);
-        this.pot +=1;
-        // console.log(this.currentTotalBet);
-        setTimeout(this.updateTotalBet, 800);
-        
-        
-        setTimeout(this.smallBind, 1600);
-        
-    }
-
-
-    smallBind = () => {
-        this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
-        console.log(this.bigBlindID);
-        this.players[this.bigBlindID].Bet(2);
-        this.currentBet = 2;
-        this.pot += 2;
-        this.updateTotalBet();
-        console.log('after blind, current bet is' + this.currentBet);
-    }
+    
 
     getNextPlayerID = (IDArr, ID) => {
         let id = IDArr.indexOf(ID);
@@ -350,6 +250,7 @@ class PokerPlayer {
         this.fundsEl;
         this.hands = [];
         this.handsEl;
+        this.msgEl;
         this.fold = false;
         this.showhand = false;
         this.betAtSH = 0;
@@ -428,3 +329,5 @@ askAPlayer = (intervalHandle, turnCurrIndex, turnEndIndex) => {
     turnCurrIndex < this.currentTurnIDArr.length-1? turnCurrIndex++ : turnCurrIndex = 0;
     return turnCurrIndex;
 }
+
+

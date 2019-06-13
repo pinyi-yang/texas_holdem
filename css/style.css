@@ -44,7 +44,20 @@ main * {
     height: 100%;
     width: 16%;
     border: black solid 1px;
-    background: rgba(199, 199, 199, 0.7);
+    background-size: contain;
+    background-repeat: no-repeat;
+    
+}
+.dealercards img:nth-child(3) {
+    position: absolute;
+    height: 100%;
+    animation: rotate 1s linear;
+    animation-fill-mode: forwards;
+}
+.dealercards img:first-child {
+
+    animation: flash 0.3s step-end;
+    animation-fill-mode: forwards;
 }
 .player {
     position: absolute;
@@ -54,6 +67,23 @@ main * {
     border: black solid 1px;
     border-radius: 5px;
 }
+.msg {
+    position: absolute;
+    background: white;
+    border-radius: 40%;
+    width: 60%;
+    text-align: center;
+    padding: 0.2vw;
+}
+.msgright {
+    top: -23%;
+    left: -43%;
+}
+.msgleft {
+    top: -23%;
+    right: -43%;
+}
+
 .playercards {
     height: 80%;
     border: black solid 1px;
@@ -66,26 +96,26 @@ main * {
 }
 
 #player0 {
-    top: 1%;
+    top: 6%;
     right: 12%;
 
 }
 #player1 {
-    top: 40%;
+    top: 45%;
     right: 3%;
 }
 #player2 {
-    top: 55%;
+    top: 65%;
     left: 39%;
 
 }
 #player3 {
-    top: 40%;
+    top: 45%;
     left: 3%;
     
 }
 #player4 {
-    top: 1%;
+    top: 6%;
     left: 10%;
 }
 
@@ -121,4 +151,22 @@ main * {
     padding: 0.5vw 1.2vw;
     border-radius: 10px;
     margin: auto 0.8vw;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotateY(0turn);
+    }
+    100% {
+        transform: rotateY(0.5turn);
+    }
+}
+
+@keyframes flash {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
