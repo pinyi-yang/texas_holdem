@@ -63,6 +63,9 @@ main * {
     border: black solid 1px;
     border-radius: 5px;
 }
+.selectplayer {
+    animation: select 3.5 linear;
+}
 .msg {
     position: absolute;
     background: white;
@@ -70,6 +73,12 @@ main * {
     width: 60%;
     text-align: center;
     padding: 0.2vw;
+    opacity: 0;
+     
+}
+.msgpop {
+    animation: fadein 3.5s linear;
+    animation-fill-mode: forwards;
 }
 .msgright {
     top: -23%;
@@ -178,11 +187,35 @@ main * {
     }
 }
 
-@keyframes flash {
-    0% {
-        opacity: 1;
-    }
-    100% {
+@keyframes fadein {
+    0%{
         opacity: 0;
+        top: 0;
+    }
+    20% {
+        opacity: 1;
+        top: -23%;
+    }
+    80% {
+        opacity: 1;
+        top: -23%;
+    }
+    100%{
+        opacity: 0;
+        top: -23%;
+    }
+}
+@keyframes select {
+    0%{
+        border-radius: black solid 1px;
+    }
+    20% {
+        border-radius: black solid 3px;
+    }
+    80% {
+        border-radius: black solid 3px;
+    }
+    100%{
+        border-radius: black solid 1px;
     }
 }

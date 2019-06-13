@@ -13,6 +13,7 @@ var playerCardsElArr = document.getElementsByClassName('playercards');
 var playerFundsElArr = document.getElementsByClassName('playerfund');
 var playerMsgElArr = document.getElementsByClassName('msg');
 var dealerCardsDivElArr = document.getElementsByClassName('dealercards');
+var resetCtlDivEl = document.getElementById('resetctldiv');
 
 //* buttons
 var startBtnEl = document.getElementById('startbtn');
@@ -36,13 +37,28 @@ continueBtnEl.addEventListener('click', nextTurn);
 
 callBtnEl.addEventListener('click', function() {
     game.Call(game.players[2]);
-    game.currentPlayerIDArr[game.turnCurrIndex] === 2 ? nextStage() : askNextPlayerBet();
+    setTimeout(function() {
+        if (game.currentPlayerIDArr[game.turnEndIndex] === 2) {
+        game.stageNum++;
+        nextStage() 
+    } else {
+        askNextPlayerBet();
+    }
+    },600);
+
     betCtlDivEl.classList.add('hidden');
 });
 
 foldBtnEl.addEventListener('click', function() {
     game.Fold(game.players[2]);
-    game.currentPlayerIDArr[game.turnCurrIndex] === 2 ? nextStage() : askNextPlayerBet();
+    setTimeout(function() {
+        if (game.currentPlayerIDArr[game.turnEndIndex] === 2) {
+        game.stageNum++;
+        nextStage() 
+    } else {
+        askNextPlayerBet();
+    }
+    },600);
     betCtlDivEl.classList.add('hidden');    
 });
 
@@ -118,13 +134,6 @@ function nextTurn() {
             }, 2400);
             //!total delay 6400
             delay = game.currentPlayerIDArr.length* 800 + 2400;
-            // setTimeout(function() {
-            //     for (let i = 0; i < game.players.length; i++) {
-            //     game.players[i].hands = game.allCards.slice(2 * i, 2 * (i + 1));
-            //     game.players[i].showHands("img/back.png", "img/back.png");
-                // console.log(game.players[i].hands);
-                    //*passed
-            // }}, delay*4)
             
             game.dealercards = jsonData.cards.slice(10);
             setTimeout(function() {
@@ -142,14 +151,6 @@ function nextTurn() {
                 console.log('current stage is ' + game.stageNum);
             }, delay + 800);
         });
-        // .then(function(game) {
-        //     console.log('next stage is ' + game.stageNum);
-        // });
-    // displayHandCards(backurl, backurl);
-    // for (let player of game.players) {
-    //     player.showHands(backurl, backurl);
-    // }
-
 }
 
 //! abandoned
@@ -186,20 +187,6 @@ function getCardsAPI() {
             
         });
 }
-//! origin loop delay, replace by following
-// function loopDelayFunction() {
-//     let j = 0;
-//     for (i = 0; i < 5; i++) {
-//         (function (i) {
-//             setTimeout(function() {
-//                 console.log(j);
-//                 game.players[j].hands = game.allCards.slice(2 * j, 2 * (j + 1));
-//                 game.players[j].showHands("img/back.png", "img/back.png");
-//                 j++;
-//             }, 800 * i);
-//         })(i);
-//     }
-// }
 
 function loopDelayFunction(func, currIDArray, delay, j = 0) {
     for (var i = 0; i < currIDArray.length; i++) {
@@ -247,26 +234,37 @@ function nextStage () {
         case 1:
             console.log('Show flop cards. Start bet');
             showNextDealerCard(0, 3);
-            
-            askNextPlayerBet();
+            game.initTurnIndex();
+            setTimeout(askNextPlayerBet, 3200);
             break
         case 2:
             console.log('Show turn card. Start bet');
             showNextDealerCard(3,4);
-            askNextPlayerBet();
+            game.initTurnIndex();
+            setTimeout(askNextPlayerBet, 2000);
+
             break;
         case 3:
             console.log('Show river card. Start bet');
             showNextDealerCard(4,5);
-            askNextPlayerBet();
+            game.initTurnIndex();
+            setTimeout(askNextPlayerBet, 2000);
             break;        
         case 4:
             console.log('Show cards in hand. End turn');
+            for (let id in game.currentTurnIDArr) {
+                if (id !== 2) {
+                    console.log('show cards of player ' + id);
+                    game.players[id].showCards();
+                }
+            }
             game.getResults();
             game.endTurn();
             game.stageNum = 0;
-            return;
+            resetCtlDivEl.classList.remove('hidden')
+            
     }
+    return;
     // if (this.currentID === this.startBetID) {
     //     this.stageNum++;
     //     return;
@@ -275,14 +273,22 @@ function nextStage () {
 
 function askNextPlayerBet(delaycounter = 1) {
     let id = game.currentTurnIDArr[game.turnCurrIndex]
+    game.players[id].msgEl.textContent = '';
+    game.players[id].msgEl.classList.remove('msgpop');
+    game.players[id].msgEl.classList.remove('selectplayer');
+    game.players[id].msgEl.classList.add('selectplayer');
+
+    
 
     //? end of stage, all players finish bet 
     if (game.turnCurrIndex === game.turnEndIndex && id !== 2) {
-        game.computerBet(game.players[id]);
+        setTimeout(function() {
+            game.computerBet(game.players[id])
+        }, (delaycounter-1)*1200 + 600);
         console.log('go to next stage');
         game.stageNum++;
         game.currStageSHPlayers = [];
-        return setTimeout(nextStage, 1500);
+        return setTimeout(nextStage, 1200*delaycounter);
        
     }
 
@@ -305,8 +311,9 @@ function askNextPlayerBet(delaycounter = 1) {
         game.computerBet(game.players[id]);
         game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
-        return askNextPlayerBet(delaycounter++);
-    }, 1500 * delaycounter);
+        delaycounter++;
+        return askNextPlayerBet(delaycounter);
+    }, 1200 * delaycounter);
 
     
 }
@@ -339,7 +346,8 @@ function gamerRaise() {
         } else {
             game.Raise(game.players[2], bet);
         }
-        game.currentPlayerIDArr[game.turnCurrIndex] === 2 ? nextStage() : askNextPlayerBet();
+        //*check whether gamer is the last one to bet
+        game.currentPlayerIDArr[game.turnEndIndex] === 2 ? nextStage() : askNextPlayerBet();
         betCtlDivEl.classList.add('hidden');
 
     }

@@ -68,7 +68,7 @@ class PokerGame {
         return startIndex === 0? this.currentTurnIDArr.length-1: startIndex -1;
     }
 
-    initTurnIndex = (startIndex = this.startBetID) => {
+    initTurnIndex = (startIndex = 0) => {
         //! no check showhand and fold. will check when each player showhand or fold
         
         //? get index at currentTurnIDArr
@@ -76,8 +76,7 @@ class PokerGame {
         this.turnStartIndex = startIndex;
         this.turnCurrIndex = this.turnStartIndex;
         
-        this.turnEndIndex = this.getEndIndex(this.turnStartIndex);
-        console.log('start ask for bet from player' + this.turnStartIndex + ' to player' + this.turnEndIndex);
+        this.turnEndIndex = this.currentTurnIDArr.length-1
     }
 
     showDealerCard = () => {
@@ -137,6 +136,8 @@ class PokerGame {
     showHands = (player) => {
         //? update player.showhand, update playerBet
         console.log('player' + this.players.indexOf(player) + ' showhand');
+        player.msgEl.textContent = 'Show Hand!!!';
+        player.msgEl.classList.add('msgpop');
         player.showhand = true;
         player.betAtSH = player.funds + player.playerBet - this.currentBet;
 
@@ -189,6 +190,9 @@ class PokerGame {
         console.log('player' + this.players.indexOf(player) + ' fold');
         player.fold = true;
         player.msgEl.textContent = 'Fold!';
+        player.msgEl.classList.add('msgpop');
+        player.handsEl.textContent ="";
+
 
         let betEndPlayerID = this.currentPlayerIDArr[this.turnEndIndex];
         //* take player out
@@ -201,12 +205,26 @@ class PokerGame {
         
         //? update start and end index
         //? currIndex will increase 1 after bet
-        if (this.turnCurrIndex >= this.currentTurnIDArr.length) {
-            this.turnCurrIndex = 0;
+        if (this.turnCurrIndex >= this.currentTurnIDArr.length || this.turnCurrIndex === 0) {
+            this.turnCurrIndex = this.currentTurnIDArr.length -1;
+            console.log('next palyer is ' + this.currentTurnIDArr[0]);
+        } else {
+            console.log('next palyer is ' + this.currentTurnIDArr[this.turnCurrIndex]);
+            this.turnCurrIndex--;
         }
-        console.log('next palyer is ' + this.currentTurnIDArr[this.turnCurrIndex]);
-        this.turnEndIndex = this.currentTurnIDArr.indexOf(betEndPlayerID);
-        console.log('New bet turn will end at player' + this.turnEndIndex);
+        
+        if (this.currentTurnIDArr.indexOf(betEndPlayerID) !== -1) {
+            //* fold player is not the last bet player
+            this.turnEndIndex = this.currentTurnIDArr.indexOf(betEndPlayerID); //? passed
+        } else {
+            if (this.turnEndIndex >= this.currentTurnIDArr.length) {
+                //* player take out is last in IDArr.
+                this.turnEndIndex = this.currentTurnIDArr.length -1;
+            }
+        }
+
+        
+        console.log('This turn will end at player' + this.currentPlayerIDArr[this.turnEndIndex]);
 
 
         //! check whether only one active player in current turn
@@ -220,6 +238,8 @@ class PokerGame {
         console.log('player' + this.players.indexOf(player) + ' call $' + bet);
         this.updateTotalBet(bet);
         player.msgEl.textContent ='Call.'
+        player.msgEl.classList.add('msgpop');
+
     }
 
     Raise = (player, bet = 0) => {
@@ -236,13 +256,14 @@ class PokerGame {
         }
 
         console.log('call ' + call + ', raise ' + raise);
-        player.msgEl.textContent = 'Raise $' + raise
+        player.msgEl.textContent = 'Raise $' + raise;
+        player.msgEl.classList.add('msgpop');
         let amount = raise + call;
         player.Bet(amount);
         this.currentBet += raise;
         
-        this.turnStartIndex = this.currentPlayerIDArr.indexOf(this.players.indexOf(player));
-        this.turnEndIndex = this.getEndIndex(this.turnStartIndex);
+        this.turnStartIndex = this.turnCurrIndex;
+        this.turnEndIndex = this.getEndIndex(this.turnCurrIndex);
         console.log('New bet turn start with player' + this.currentPlayerIDArr[this.turnStartIndex] + '. end with player' + this.currentPlayerIDArr[this.turnEndIndex]);      
         console.log('Current Players are ' + this.currentPlayerIDArr);  
         this.updateTotalBet(amount); 
@@ -280,6 +301,7 @@ class PokerGame {
     }
 
     endTurn = () => {
+        
 
     }
 }//end of poker game
@@ -320,10 +342,6 @@ class PokerPlayer {
         this.handsEl.appendChild(card1);
         // console.log("player: " + this.handsEl);
     }
-
-
-
-   
 }
 
 // var player1 = new PokerPlayer;
