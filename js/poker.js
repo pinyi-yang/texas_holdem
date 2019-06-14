@@ -41,7 +41,7 @@ class PokerGame {
         this.currentBet = 0;
         this.stageNum = 0;
         this.currStageSHPlayers = [];
-        this.currentTurnIDArr = [];
+        this.currentTurnIDArr = this.currentPlayerIDArr.slice(0);
         for (let player of this.players) {
             player.initPlayerVar();
             console.log(player);

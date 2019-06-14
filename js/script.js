@@ -40,10 +40,12 @@ continueBtnEl.addEventListener('click', nextTurn);
 callBtnEl.addEventListener('click', function() {
     game.Call(game.players[2]);
     setTimeout(function() {
-        if (game.currentPlayerIDArr[game.turnEndIndex] === 2) {
+        if (game.currentTurnIDArr[game.turnEndIndex] === 2) {
         game.stageNum++;
         nextStage() 
     } else {
+        //* get to next player
+        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         askNextPlayerBet();
     }
     },600);
@@ -54,10 +56,12 @@ callBtnEl.addEventListener('click', function() {
 foldBtnEl.addEventListener('click', function() {
     game.Fold(game.players[2]);
     setTimeout(function() {
-        if (game.currentPlayerIDArr[game.turnEndIndex] === 2) {
+        if (game.currentTurnIDArr[game.turnEndIndex] === 2) {
         game.stageNum++;
         nextStage() 
     } else {
+        //* get to next player
+        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         askNextPlayerBet();
     }
     },600);
@@ -128,7 +132,6 @@ function nextTurn() {
             //todo initiate game variable for each turn
             game.initiGameVar();
             game.stageNum = 0; //!!!stage controller
-            game.currentTurnIDArr = game.currentPlayerIDArr;
             //? 1. big blind and small blind 
             //? 2. distribute card
             game.startBlind(); 
@@ -137,10 +140,10 @@ function nextTurn() {
             
             // setTimeout(loopDelayFunction, 2400);
             setTimeout(function() {
-                loopDelayFunction(setCardBack, game.currentPlayerIDArr, 800);
+                loopDelayFunction(setCardBack, game.currentTurnIDArr, 800);
             }, 2400);
             //!total delay 6400
-            delay = game.currentPlayerIDArr.length* 800 + 2400;
+            delay = game.currentTurnIDArr.length* 800 + 2400;
             
             game.dealercards = jsonData.cards.slice(10);
             setTimeout(function() {
@@ -314,7 +317,6 @@ function askNextPlayerBet(delaycounter = 1) {
     // let id = game.currentTurnIDArr[turnCurrIndex];
     //? get to gamer, stop. game will control by buttons
     if (id === 2) {
-        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         betCtlDivEl.classList.remove('hidden');
         console.log("gamer's turn");
         return;
@@ -364,9 +366,11 @@ function gamerRaise() {
             game.showHands(players[2]);
         } else {
             game.Raise(game.players[2], bet);
+        
         }
-        //*check whether gamer is the last one to bet
-        game.currentPlayerIDArr[game.turnEndIndex] === 2 ? nextStage() : askNextPlayerBet();
+        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;        
+        askNextPlayerBet();
+        // game.currentTurnIDArr[game.turnEndIndex] === 2 ? nextStage() : askNextPlayerBet();
         betCtlDivEl.classList.add('hidden');
 
     }
