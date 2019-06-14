@@ -260,7 +260,7 @@ function nextStage () {
         case 4:
             console.log('Show cards in hand. End turn');
             if (game.currentTurnIDArr.length !== 1 || game.currentTurnIDArr[0] !== 2) {
-                for (let id in game.currentTurnIDArr) {
+                for (let id of game.currentTurnIDArr) {
                     if (id !== 2) {
                         console.log('show cards of player ' + id);
                         game.players[id].showCards();

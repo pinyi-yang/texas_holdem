@@ -189,7 +189,7 @@ class PokerGame {
         player.handsEl.textContent ="";
 
 
-        let betEndPlayerID = this.currentPlayerIDArr[this.turnEndIndex];
+        let betEndPlayerID = this.currentTurnIDArr[this.turnEndIndex];
         //* take player out
         this.currentTurnIDArr.splice(this.currentTurnIDArr.indexOf(id), 1);
         console.log('player' + this.players.indexOf(player) + ' out of game.');
@@ -219,7 +219,7 @@ class PokerGame {
         }
 
         
-        console.log('This turn will end at player' + this.currentPlayerIDArr[this.turnEndIndex]);
+        console.log('This turn will end at player' + this.currentTurnIDArr[this.turnEndIndex]);
 
 
         //! check whether only one active player in current turn
@@ -259,8 +259,8 @@ class PokerGame {
         
         this.turnStartIndex = this.turnCurrIndex;
         this.turnEndIndex = this.getEndIndex(this.turnCurrIndex);
-        console.log('New bet turn start with player' + this.currentPlayerIDArr[this.turnStartIndex] + '. end with player' + this.currentPlayerIDArr[this.turnEndIndex]);      
-        console.log('Current Players are ' + this.currentPlayerIDArr);  
+        console.log('New bet turn start with player' + this.currentTurnIDArr[this.turnStartIndex] + '. end with player' + this.currentTurnIDArr[this.turnEndIndex]);      
+        console.log('Current Players are ' + this.currentTurnIDArr);  
         this.updateTotalBet(amount); 
     }
 
