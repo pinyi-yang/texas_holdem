@@ -63,9 +63,7 @@ main * {
     border: black solid 1px;
     border-radius: 5px;
 }
-.selectplayer {
-    animation: select 3.5 linear;
-}
+
 .msg {
     position: absolute;
     background: white;
@@ -203,19 +201,5 @@ main * {
     100%{
         opacity: 0;
         top: -23%;
-    }
-}
-@keyframes select {
-    0%{
-        border-radius: black solid 1px;
-    }
-    20% {
-        border-radius: black solid 3px;
-    }
-    80% {
-        border-radius: black solid 3px;
-    }
-    100%{
-        border-radius: black solid 1px;
     }
 }
