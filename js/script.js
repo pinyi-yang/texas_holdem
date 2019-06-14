@@ -120,7 +120,7 @@ function nextTurn() {
             // console.log(jsonData.cards); //* passed
             
             //todo initiate game variable for each turn
-            game.stageNum = 0;
+            game.stageNum = 3; //!!!!!!!!!
             game.currentTurnIDArr = game.currentPlayerIDArr;
             //? 1. big blind and small blind 
             //? 2. distribute card
@@ -235,7 +235,7 @@ function nextStage () {
             console.log('Show flop cards. Start bet');
             showNextDealerCard(0, 3);
             game.initTurnIndex();
-            setTimeout(askNextPlayerBet, 3200);
+            setTimeout(askNextPlayerBet, 2800);
             break
         case 2:
             console.log('Show turn card. Start bet');
@@ -258,7 +258,7 @@ function nextStage () {
                     game.players[id].showCards();
                 }
             }
-            game.getResults();
+            game.getResults(); //*passed
             game.endTurn();
             game.stageNum = 0;
             resetCtlDivEl.classList.remove('hidden')

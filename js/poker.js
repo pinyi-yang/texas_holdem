@@ -1,7 +1,7 @@
 class PokerGame {
     constructor() {
         this.allCards;
-        this.dealerCards;
+        this.dealercards;
         this.bigBlindID = 0;
         this.startBetID = 0;
         this.lastID = 4;
@@ -12,7 +12,7 @@ class PokerGame {
         this.turnStartIndex;
         this.turnEndIndex;
         this.turnCurrIndex;
-        this.stageNum = 0;
+        this.stageNum = 3;
         this.currStageSHPlayers = []; //show hand player at a stage. set to empty at end of each stage
         this.currentBet = 0; //! bet at current bet around
         this.pot = 0; //!change from currentTotalBet
@@ -77,25 +77,6 @@ class PokerGame {
         this.turnCurrIndex = this.turnStartIndex;
         
         this.turnEndIndex = this.currentTurnIDArr.length-1
-    }
-
-    showDealerCard = () => {
-        let startCardIndex;
-        let endCardIndex;
-        switch(this.stageNum) {
-            case 1:
-                startCardIndex = 0;
-                endCardIndex = 3;
-            case 2: 
-        }
-    }
-
-    showADealerCard = (i) => {
-        
-    }
-
-    getResults = () => {
-
     }
     
     computerBet = (player) => {
@@ -296,8 +277,16 @@ class PokerGame {
     }
     
 
-    showResults = () => {
-        
+    getResults = () => {
+        let id;
+        let hand;
+        for (let index of this.currentTurnIDArr) {
+            id = this.currentTurnIDArr[index];
+            console.log(this.dealercards);
+            hand = this.dealercards.concat(this.players[id].hands)
+            this.players[id].handRank = this.getHandRank(hand);
+            console.log('Player' + id +"'s hand is " + this.players[id].handRank);
+        }
     }
 
     endTurn = () => {
@@ -305,8 +294,7 @@ class PokerGame {
 
     }
 
-    getHandRank = (player) => {
-        let hand = this.dealerCards.concat(player.hands);
+    getHandRank = (hand) => {
         let suitcount = {};
         let numbercount = {};
         let numKeys = [];
@@ -320,7 +308,7 @@ class PokerGame {
         let sf;
         let temp;
     
-        [suitcount, numbercount] = getHandStat(hand); //* numArr
+        [suitcount, numbercount] = this.getHandStat(hand); //* numArr
     
         //? check fk, fh, tk, pair
         for (let key in numbercount) {
@@ -348,66 +336,66 @@ class PokerGame {
      
     
         numKeys = Object.keys(numbercount); //*sorted, numArr
-        let codeKeys = CodifyNumArr(numKeys); //*sorted, codeArr
-        straight = checkStraight(numKeys); //*decent, numArr passed
-        flush = checkFlush(suitcount); //* passed, code;
-        sf = checkStraight( flush[1].sort()); //* passed;
+        let codeKeys = this.CodifyNumArr(numKeys); //*sorted, codeArr
+        straight = this.checkStraight(numKeys); //*decent, numArr passed
+        flush = this.checkFlush(suitcount); //* passed, code;
+        sf = this.checkStraight( flush[1].sort()); //* passed;
     
         if (sf[0]) {
             if (sf[1][4] === 'E') {
-                return [9, CodifyNumArr(sf[1].reverse().join('')), 'Royal Flush, Ace high!']
+                return [9, this.CodifyNumArr(sf[1].reverse().join('')), 'Royal Flush, Ace high!']
             }
             else {
-                return [8, CodifyNumArr(sf[1].reverse().join('')), 'Straight Flush, ' + NamCode(sf[1][4]) + ' high!']
+                return [8, this.CodifyNumArr(sf[1].reverse().join('')), 'Straight Flush, ' + this.NamCode(sf[1][4]) + ' high!']
             }
         }
     
         if (fk[0]) {
-            let temp = CodifyNumArr(fk[1])
-            return [7, temp[0], 'Four of a Kind ' + NamCode(temp[0]) + ' high!']
+            let temp = this.CodifyNumArr(fk[1])
+            return [7, temp[0], 'Four of a Kind ' + this.NamCode(temp[0]) + ' high!']
         }
     
         //*full house
         if (tk[0] && pair[0]) {
             pair[1].length === 1 ? fh[1].push(tk[1][0], pair[1][0]) : fh[1].push(tk[1][0], Math.max(pair[1][0], pair[1][1]));
-            return [6, CodifyNumArr(fh[1]).join(''), 'Full House ' + NamCode(CodifyNumArr(fh[1])[0]) + ' high!'];
+            return [6, this.CodifyNumArr(fh[1]).join(''), 'Full House ' + this.NamCode(this.CodifyNumArr(fh[1])[0]) + ' high!'];
         } 
         
         if (tk[1].length === 2) {
             tk[1][0] > tk[1][1] ? fh[1].push(tk[1][0], tk[1][1]) : fh[1].push(tk[1][1], tk[1][0]);
-            return [6, CodifyNumArr(fh[1]).join(''), 'Full House ' + NamCode(CodifyNumArr(fh[1])[0]) + ' high!'];
+            return [6, this.CodifyNumArr(fh[1]).join(''), 'Full House ' + this.NamCode(this.CodifyNumArr(fh[1])[0]) + ' high!'];
         }
     
         if (flush[0]) {
             temp = flush[1].sort().reverse().slice(0, 5);
-            return [5, temp.join(''), 'Flush ' + NamCode(temp[0]) + ' high!'];
+            return [5, temp.join(''), 'Flush ' + this.NamCode(temp[0]) + ' high!'];
         }
     
         if (straight[0]) {
-            temp = CodifyNumArr(straight[1]);
-            return [4, temp.join(''), 'Straight ' + NamCode(temp[0]) + ' high!'];
+            temp = this.CodifyNumArr(straight[1]);
+            return [4, temp.join(''), 'Straight ' + this.NamCode(temp[0]) + ' high!'];
         }
     
         if (tk[0]) {
-            temp = CodifyNumArr(tk[1]);
-            return [3, temp.join(''), 'Three of a Kind' + NamCode(temp[0]) + ' high!']
+            temp = this.CodifyNumArr(tk[1]);
+            return [3, temp.join(''), 'Three of a Kind' + this.NamCode(temp[0]) + ' high!']
         }
     
         //* two pairs
         if (pair[1].length >= 2) {
-            temp = CodifyNumArr(pair[1]);
+            temp = this.CodifyNumArr(pair[1]);
             temp.sort().reverse().slice(0,2);
             let i = 0;
             while (temp.includes(codeKeys[i])) {
                 i++
             }
             
-            return [2, temp.join('') + codeKeys[i], 'Two Pairs ' + NamCode(temp[0]) + ' ' + NamCode(temp[1]) + ' with ' + NamCode(codeKeys[i])];
+            return [2, temp.join('') + codeKeys[i], 'Two Pairs ' + this.NamCode(temp[0]) + ' ' + this.NamCode(temp[1]) + ' with ' + this.NamCode(codeKeys[i])];
         }
     
         //* one pair
         if (pair[1].length === 1) {
-            temp = CodifyNumArr(pair[1]);
+            temp = this.CodifyNumArr(pair[1]);
             let tempArr = [];
             let i = 0;
             while (tempArr.length < 3 && i < codeKeys.length - 1) {
@@ -417,7 +405,7 @@ class PokerGame {
                 i++;
             }
             
-            return [1, temp.join('') + tempArr.sort().reverse().join(''), 'One Pair ' + NamCode(temp[0])];
+            return [1, temp.join('') + tempArr.sort().reverse().join(''), 'One Pair ' + this.NamCode(temp[0])];
         }
     
         return [0, codeKeys.reverse().join(''), 'High Card'];    
@@ -427,24 +415,26 @@ class PokerGame {
     getHandStat = (hand) => {
         let suitcount = {};
         let numbercount = {};
-        hand.forEach(function (card) {
+        console.log('hand is' + hand);
+        for (let card of hand) {
             //todo orgnize by suit
             if (!suitcount[card.suit]) {
+                console.log('card is' + card);
                 suitcount[card.suit] = [];
-                suitcount[card.suit].push(numCardCode(card));
+                suitcount[card.suit].push(this.numCardCode(card));
                 ;
             }
             else {
-                suitcount[card.suit].push(numCardCode(card));
+                suitcount[card.suit].push(this.numCardCode(card));
             }
             //todo orgnize by number
-            if (!numbercount[numCardCode(card)]) {
-                numbercount[numCardCode(card)] = 1;
+            if (!numbercount[this.numCardCode(card)]) {
+                numbercount[this.numCardCode(card)] = 1;
             }
             else {
-                numbercount[numCardCode(card)]++;
+                numbercount[this.numCardCode(card)]++;
             }
-        });
+        };
         return [suitcount, numbercount];
     }
     
@@ -469,7 +459,7 @@ class PokerGame {
         return result;
     }
     
-numCardCode = (card) => {
+    numCardCode = (card) => {
         let value;
     
         if (card.code.charAt(0) === '0') {
@@ -516,7 +506,7 @@ numCardCode = (card) => {
             return [0, []];
         }
         
-        return checkStraight(acearr, count, index);
+        return this.checkStraight(acearr, count, index);
     }
     
     checkFlush = (suitcount) => {
