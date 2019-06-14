@@ -25,9 +25,10 @@ class PokerGame {
             }
             return gamers
         })(); //! () is necessary!!
-        this.winnerHR = [0,[]]
+        this.winnerHR = [-1,[]]
         this.winner;
         this.winnerid;
+        this.winmsg;
         // this.updatePlayersFunds = this.updatePlayersFunds.bind(this);
         // this.startBlind = this.startBlind.bind(this);
         this.updatePlayersFunds = this.updatePlayersFunds.bind(this);
@@ -37,7 +38,7 @@ class PokerGame {
     } //end of contributor
     
     initiGameVar = () => {
-        this.winnerHR = [0,[]];
+        this.winnerHR = [-1,[]];
         this.currentBet = 0;
         this.stageNum = 0;
         this.currStageSHPlayers = [];
@@ -305,9 +306,13 @@ class PokerGame {
             player.msgEl.classList.add('msgshow');
 
             //? check if the winner
-            if ((player.handRank[0] > this.winnerHR[0]) || (player.handRank[0] === this.winnerHR[0] && player.handRank[1] > this.winnerHR[1])) {
-                this.winner = player;
-                this.winnerid = id;
+            if ( player.handRank[0] === this.winnerHR[0] && player.handRank[1] > this.winnerHR[1] ) {
+                this.winner.push(player);
+                this.winnerid.push(id);
+            } else if ((player.handRank[0] > this.winnerHR[0]) || (player.handRank[0] === this.winnerHR[0] && player.handRank[1] > this.winnerHR[1])) {
+                this.winner = [player];
+                this.winnerid = [id];
+                console.log(this.winner, this.winnerid);
                 this.winnerHR = player.handRank;
             } 
         }
@@ -317,11 +322,30 @@ class PokerGame {
 
     endTurn = () => {        
         //?update winner funds
-        let player = this.winner;
-        player.funds += this.pot;
+        let player 
+        if ( this.winner.length === 1 ) {
+            player = this.winner[0];
+            player.funds += this.pot;
+            player.fundsEl.textContent = '$ ' + player.funds;
+            if (this.winnerid[0] === 2) {
+                this.winmsg = 'You win the game by ' + this.winnerHR[2];
+            } else {
+                this.winmsg = 'Player ' + this.winnerid[0] + ' win by ' + this.winnerHR[2]; 
+            }
+        } else {
+            for (let id of this.winnerid) {
+                this.players[id].funds += this.pot/this.winner.length;
+                this.players[id].fundsEl.textContent = '$ ' + this.players[id].funds;
+                if (id === 2) {
+                    this.winmsg += 'You, '; 
+                } else {
+                    this.winmsg += 'Player, '; 
+                }
+            }
+            this.winmsg += ' ties the game with ' + this.winnerHR[2];
+        }
         this.pot = 0;
         this.totalBetEl.textContent = " $0"
-        player.fundsEl.textContent = '$ ' + player.funds;
     }
 
     getHandRank = (hand) => {

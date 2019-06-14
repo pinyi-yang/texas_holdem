@@ -275,12 +275,7 @@ function nextStage () {
                 game.endTurn();
                 game.stageNum = 0;
                 resetCtlDivEl.classList.remove('hidden');
-                if (game.winnerid === 2) {
-                    gameMsgEl.textContent = 'You win the game by ' + game.winnerHR[2];
-                } else {
-                    gameMsgEl.textContent = 'Player ' + game.winnerid + ' win by ' + game.winnerHR[2]; 
-    
-                }
+                gameMsgEl.textContent = game.winmsg;                 
                 gameMsgDivEl.classList.remove('hidden');
             }, 3000);
             
