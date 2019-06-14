@@ -127,11 +127,11 @@ function nextTurn() {
             
             //todo initiate game variable for each turn
             game.initiGameVar();
-            game.stageNum = 3; //!!!!!!!!!
+            game.stageNum = 0; //!!!stage controller
             game.currentTurnIDArr = game.currentPlayerIDArr;
             //? 1. big blind and small blind 
             //? 2. distribute card
-            game.startBlind(); //!delay 1600
+            game.startBlind(); 
             game.allCards = jsonData.cards;
 
             
@@ -259,10 +259,12 @@ function nextStage () {
             break;        
         case 4:
             console.log('Show cards in hand. End turn');
-            for (let id in game.currentTurnIDArr) {
-                if (id !== 2) {
-                    console.log('show cards of player ' + id);
-                    game.players[id].showCards();
+            if (game.currentTurnIDArr.length !== 1 || game.currentTurnIDArr[0] !== 2) {
+                for (let id in game.currentTurnIDArr) {
+                    if (id !== 2) {
+                        console.log('show cards of player ' + id);
+                        game.players[id].showCards();
+                    }
                 }
             }
             game.getResults(); //*passed
@@ -277,7 +279,7 @@ function nextStage () {
     
                 }
                 gameMsgDivEl.classList.remove('hidden');
-            }, 1200);
+            }, 3000);
             
             
     }

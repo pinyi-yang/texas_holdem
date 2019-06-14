@@ -98,10 +98,10 @@ class PokerGame {
         let betOptionCtl = Math.random();
         console.log('current bet is ' + this.currentBet);;
         
-        //!test
-        if (this.players.indexOf(player) === 4) {
-            betOptionCtl =0.01;
-        }
+        //!test player controller;
+        // if (this.players.indexOf(player) === 4) {
+        //     betOptionCtl =0.01;
+        // }
         
 
         switch (true) {
@@ -161,7 +161,6 @@ class PokerGame {
 
     endTurnEarlyOrNot = () => {
         if (this.currentTurnIDArr.length - this.currStageSHPlayers.length === 1) {
-            this.showDealerCard();
             this.getResults()
             this.endTurn()
             console.log('this turn end due to only 1 active player');
@@ -293,11 +292,9 @@ class PokerGame {
     
 
     getResults = () => {
-        let id;
         let hand;
         let player
-        for (let index of this.currentTurnIDArr) {
-            id = this.currentTurnIDArr[index];
+        for (let id of this.currentTurnIDArr) {
             player = this.players[id];
             hand = this.dealercards.concat(player.hands)
             player.handRank = this.getHandRank(hand);
@@ -323,7 +320,7 @@ class PokerGame {
         let player = this.winner;
         player.funds += this.pot;
         this.pot = 0;
-        this.totalBetEl.textContent = "Total Bet: $0"
+        this.totalBetEl.textContent = " $0"
         player.fundsEl.textContent = '$ ' + player.funds;
     }
 
@@ -372,7 +369,11 @@ class PokerGame {
         let codeKeys = this.CodifyNumArr(numKeys); //*sorted, codeArr
         straight = this.checkStraight(numKeys); //*decent, numArr passed
         flush = this.checkFlush(suitcount); //* passed, unsorted numArr;
-        sf = this.checkStraight( flush[1].sort()); //* passed;
+
+        //* sort flush[1]
+        let flusharry = this.CodifyNumArr(flush[1]).sort();
+        flusharry = this.numCodeArr(flusharry);
+        sf = this.checkStraight(flusharry); //* passed;
     
         if (sf[0]) {
             if (sf[1][4] === 'E') {
@@ -419,7 +420,8 @@ class PokerGame {
             temp = this.CodifyNumArr(pair[1]);
             temp.sort().reverse().slice(0,2);
             let i = 0;
-            while (temp.includes(codeKeys[i])) {
+            let tempArr = codeKeys.reverse();
+            while (temp.includes(tempArr[i])) {
                 i++
             }
             
@@ -487,6 +489,26 @@ class PokerGame {
                     return "A";
                 default:
                     return num;
+            }
+        })
+        return result;
+    }
+
+    numCodeArr = (codeArr) => {
+        let result = codeArr.map(function(code) {
+            switch(code) {
+                case "E":
+                    return "14";
+                case "D":
+                    return "13";
+                case "C":
+                    return "12";
+                case "B":
+                    return "11";
+                case "A":
+                    return "10";
+                default:
+                    return code;
             }
         })
         return result;

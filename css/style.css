@@ -75,12 +75,14 @@ main * {
     font-weight: none;
     font-size: 1vw;
     border-radius: 40%;
-    width: 60%;
+    width: 40%;
     text-align: center;
     padding: 0.2vw;
     opacity: 0;
+    /* border: black solid 2px; */
      
 }
+
 .msgpop {
     animation: fadein 3.5s linear;
     animation-fill-mode: forwards;
@@ -90,12 +92,12 @@ main * {
     animation-fill-mode: forwards;
 }
 .msgright {
-    top: -23%;
-    left: -43%;
+    top: -20%;
+    left: -42%;
 }
 .msgleft {
-    top: -23%;
-    right: -43%;
+    top: 10%;
+    right: -40%;
 }
 .msggamer {
     top: -23%;
@@ -130,7 +132,7 @@ main * {
     right: 5%;
 }
 #player2 {
-    top: 64%;
+    top: 60%;
     left: 40%;
 
 }
@@ -195,35 +197,38 @@ main * {
 }
 
 .gamemsg {
-    position: absolute;
-    height: 80%;
+    position: relative;
+    height: 28%;
     background: rgba(128, 128, 128, 0.9);
-    width: 80%;
+    width: 40%;
     border-radius: 15px;
     z-index: 1;
     color: white;
     text-align: center;
-    top: 6%;
-    left: 10%;
-    animation: movein 5s ease;
+    margin: auto;
+    margin-top: 2%;
+    /* animation: movein 5s ease; */
 }
-.gamemsg h1 {
+/* .gamemsg h1 {
     margin: 12% auto;
     width: 38%;
     padding: 1.5%;
     border-radius: 5px;
     border: black solid 2px;
-}
+} */
 #gamemsgcon {
-    width: 80%;
+    position: absolute;
+    width: 90%;
     margin: auto;
-    margin-top: -7%;
+    height: 80%;
     text-align: left;
     font-size: 1.6vw;
     color: black;
     padding: 0.2vw 0.5vw;
     background: whitesmoke;
     border-radius: 5px;
+    top: 8%;
+    left: 3%;
 }
 
 @keyframes rotate {
@@ -252,15 +257,12 @@ main * {
     }
     20% {
         opacity: 1;
-        top: -23%;
     }
     80% {
         opacity: 1;
-        top: -23%;
     }
     100%{
         opacity: 0;
-        top: -23%;
     }
 }
 
@@ -271,14 +273,11 @@ main * {
     }
     20% {
         opacity: 1;
-        top: -23%;
     }
     80% {
         opacity: 1;
-        top: -23%;
     }
     100%{
         opacity: 1;
-        top: -23%;
     }
 }

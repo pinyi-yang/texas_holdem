@@ -36,11 +36,21 @@ var cards= [
     value: "QUEEN",
     }
     ];
+    var cards2 = [
+        {code: "AH", suit: "HEARTS", value: "ACE"},
+        {code: "JH", suit: "HEARTS", value: "JACK"},
+        {code: "JD", suit: "DIAMONDS", value: "JACK"},
+        {code: "KC", suit: "CLUBS", value: "KING"},
+        {code: "9S", suit: "SPADES", value: "9"},
+        {code: "AD", suit: "DIAMONDS", value: "ACE"},
+        {code: "QD", suit: "DIAMONDS", value: "QUEEN"}
+        
+    ];
 
-[suitcount, numcount] = getHandStat(cards)
+[suitcount, numcount] = getHandStat(cards2)
 console.log(suitcount);
 console.log(numcount);
-var result = getHandRank(cards);
+var result = getHandRank(cards2);
 console.log(result);
 
 function getHandRank(hand) {
@@ -90,9 +100,9 @@ function getHandRank(hand) {
     flush = checkFlush(suitcount); //* passed, unsorted numArr;
     //? sort flush[1]
     let flusharry = CodifyNumArr(flush[1]).sort();
-    flusharry = flusharry.map(NamCode)
+    flusharry = numCodeArr(flusharry)
 
-    sf = checkStraight(flush[1].sort()); //* passed;
+    sf = checkStraight(flusharry); //* passed;
 
     if (sf[0]) {
         if (sf[1][4] === 'E') {
@@ -139,7 +149,8 @@ function getHandRank(hand) {
         temp = CodifyNumArr(pair[1]);
         temp.sort().reverse().slice(0,2);
         let i = 0;
-        while (temp.includes(codeKeys[i])) {
+        let tempArr = codeKeys.reverse();
+            while (temp.includes(tempArr[i])) {
             i++
         }
         
@@ -220,7 +231,7 @@ function numCodeArr(codeArr) {
             case "C":
                 return "12";
             case "B":
-                return "1";
+                return "11";
             case "A":
                 return "10";
             default:
