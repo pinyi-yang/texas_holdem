@@ -14,6 +14,8 @@ var playerFundsElArr = document.getElementsByClassName('playerfund');
 var playerMsgElArr = document.getElementsByClassName('msg');
 var dealerCardsDivElArr = document.getElementsByClassName('dealercards');
 var resetCtlDivEl = document.getElementById('resetctldiv');
+var gameMsgDivEl = document.getElementsByClassName('gamemsg')[0];
+var gameMsgEl = document.getElementById('gamemsgcon');
 
 //* buttons
 var startBtnEl = document.getElementById('startbtn');
@@ -104,6 +106,10 @@ function nextTurn() {
         // console.log(playerhand);
     }
     resetCtlDivEl.classList.add('hidden');
+    gameMsgDivEl.classList.add('hidden');
+    for (let element of playerMsgElArr) {
+        element.classList.remove('msgshow');
+    }
     // betCtlDivEl.style.display = 'block';
     game.currentTurnIDArr = game.currentPlayerIDArr;
     // console.log(game.currentTurnIDArr);
@@ -120,6 +126,7 @@ function nextTurn() {
             // console.log(jsonData.cards); //* passed
             
             //todo initiate game variable for each turn
+            game.initiGameVar();
             game.stageNum = 3; //!!!!!!!!!
             game.currentTurnIDArr = game.currentPlayerIDArr;
             //? 1. big blind and small blind 
@@ -259,9 +266,19 @@ function nextStage () {
                 }
             }
             game.getResults(); //*passed
-            game.endTurn();
-            game.stageNum = 0;
-            resetCtlDivEl.classList.remove('hidden')
+            setTimeout(function(){
+                game.endTurn();
+                game.stageNum = 0;
+                resetCtlDivEl.classList.remove('hidden');
+                if (game.winnerid === 2) {
+                    gameMsgEl.textContent = 'You win the game by ' + game.winnerHR[2];
+                } else {
+                    gameMsgEl.textContent = 'Player ' + game.winnerid + ' win by ' + game.winnerHR[2]; 
+    
+                }
+                gameMsgDivEl.classList.remove('hidden');
+            }, 1200);
+            
             
     }
     return;

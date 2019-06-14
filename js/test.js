@@ -6,9 +6,9 @@ var cards= [
     value: "ACE",
     },
     {
-    code: "AD",
-    suit: "CLUB",
-    value: "KING",
+    code: "0D",
+    suit: "DIAMONDS",
+    value: "10",
     },
     {
     code: "AD",
@@ -16,17 +16,17 @@ var cards= [
     value: "JACK",
     },
     {
-    code: "7H",
-    suit: "HEARTS",
-    value: "7",
-    },
-    {
-    code: "0D",
+    code: "3D",
     suit: "DIAMONDS",
-    value: "10",
+    value: "3",
     },
     {
-    code: "AH",
+    code: "KD",
+    suit: "DIAMONDS",
+    value: "KING",
+    },
+    {
+    code: "8H",
     suit: "HEARTS",
     value: "8",
     },
@@ -87,8 +87,12 @@ function getHandRank(hand) {
     numKeys = Object.keys(numbercount); //*sorted, numArr
     let codeKeys = CodifyNumArr(numKeys); //*sorted, codeArr
     straight = checkStraight(numKeys); //*decent, numArr passed
-    flush = checkFlush(suitcount); //* passed, code;
-    sf = checkStraight( flush[1].sort()); //* passed;
+    flush = checkFlush(suitcount); //* passed, unsorted numArr;
+    //? sort flush[1]
+    let flusharry = CodifyNumArr(flush[1]).sort();
+    flusharry = flusharry.map(NamCode)
+
+    sf = checkStraight(flush[1].sort()); //* passed;
 
     if (sf[0]) {
         if (sf[1][4] === 'E') {
@@ -116,7 +120,7 @@ function getHandRank(hand) {
     }
 
     if (flush[0]) {
-        temp = flush[1].sort().reverse().slice(0, 5);
+        temp = CodifyNumArr(flush[1]).sort().reverse().slice(0, 5);
         return [5, temp.join(''), 'Flush ' + NamCode(temp[0]) + ' high!'];
     }
 
@@ -206,6 +210,26 @@ function CodifyNumArr(numArr) {
     return result;
 }
 
+function numCodeArr(codeArr) {
+    let result = codeArr.map(function(code) {
+        switch(code) {
+            case "E":
+                return "14";
+            case "D":
+                return "13";
+            case "C":
+                return "12";
+            case "B":
+                return "1";
+            case "A":
+                return "10";
+            default:
+                return code;
+        }
+    })
+    return result;
+}
+
 function numCardCode(card) {
     let value;
 
@@ -289,7 +313,16 @@ function NamCode(code) {
 }
 
 
-
+var card2 = [
+    {code: "AH", suit: "HEARTS", value: "ACE"},
+    {code: "JH", suit: "HEARTS", value: "JACK"},
+    {code: "JD", suit: "DIAMONDS", value: "JACK"},
+    {code: "KC", suit: "CLUBS", value: "KING"},
+    {code: "9S", suit: "SPADES", value: "9"},
+    {code: "AD", suit: "DIAMONDS", value: "ACE"},
+    {code: "QD", suit: "DIAMONDS", value: "QUEEN"}
+    
+]
 
 console.log('A' < 'B'); //true
 

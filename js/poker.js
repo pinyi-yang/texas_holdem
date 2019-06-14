@@ -25,6 +25,9 @@ class PokerGame {
             }
             return gamers
         })(); //! () is necessary!!
+        this.winnerHR = [0,[]]
+        this.winner;
+        this.winnerid;
         // this.updatePlayersFunds = this.updatePlayersFunds.bind(this);
         // this.startBlind = this.startBlind.bind(this);
         this.updatePlayersFunds = this.updatePlayersFunds.bind(this);
@@ -33,6 +36,18 @@ class PokerGame {
         this.smallBind = this.smallBind.bind(this);
     } //end of contributor
     
+    initiGameVar = () => {
+        this.winnerHR = [0,[]];
+        this.currentBet = 0;
+        this.stageNum = 0;
+        this.currStageSHPlayers = [];
+        this.currentTurnIDArr = [];
+        for (let player of this.players) {
+            player.initPlayerVar();
+            console.log(player);
+        }
+        
+    }
     startBlind = () => {
         if (this.currentPlayerIDArr.includes(this.bigBlindID)) {
             this.players[this.bigBlindID].Bet(1);
@@ -280,18 +295,36 @@ class PokerGame {
     getResults = () => {
         let id;
         let hand;
+        let player
         for (let index of this.currentTurnIDArr) {
             id = this.currentTurnIDArr[index];
-            console.log(this.dealercards);
-            hand = this.dealercards.concat(this.players[id].hands)
-            this.players[id].handRank = this.getHandRank(hand);
-            console.log('Player' + id +"'s hand is " + this.players[id].handRank);
+            player = this.players[id];
+            hand = this.dealercards.concat(player.hands)
+            player.handRank = this.getHandRank(hand);
+            console.log('Player' + id +"'s hand is " + player.handRank);
+            player.msgEl.textContent = "";
+            player.msgEl.textContent = player.handRank[2];
+            player.msgEl.classList.remove('msgpop');
+            player.msgEl.classList.add('msgshow');
+
+            //? check if the winner
+            if ((player.handRank[0] > this.winnerHR[0]) || (player.handRank[0] === this.winnerHR[0] && player.handRank[1] > this.winnerHR[1])) {
+                this.winner = player;
+                this.winnerid = id;
+                this.winnerHR = player.handRank;
+            } 
         }
+
+
     }
 
-    endTurn = () => {
-        
-
+    endTurn = () => {        
+        //?update winner funds
+        let player = this.winner;
+        player.funds += this.pot;
+        this.pot = 0;
+        this.totalBetEl.textContent = "Total Bet: $0"
+        player.fundsEl.textContent = '$ ' + player.funds;
     }
 
     getHandRank = (hand) => {
@@ -338,7 +371,7 @@ class PokerGame {
         numKeys = Object.keys(numbercount); //*sorted, numArr
         let codeKeys = this.CodifyNumArr(numKeys); //*sorted, codeArr
         straight = this.checkStraight(numKeys); //*decent, numArr passed
-        flush = this.checkFlush(suitcount); //* passed, code;
+        flush = this.checkFlush(suitcount); //* passed, unsorted numArr;
         sf = this.checkStraight( flush[1].sort()); //* passed;
     
         if (sf[0]) {
@@ -367,7 +400,7 @@ class PokerGame {
         }
     
         if (flush[0]) {
-            temp = flush[1].sort().reverse().slice(0, 5);
+            temp = this.CodifyNumArr(flush[1]).sort().reverse().slice(0, 5);
             return [5, temp.join(''), 'Flush ' + this.NamCode(temp[0]) + ' high!'];
         }
     
@@ -562,6 +595,14 @@ class PokerPlayer {
         this.handRank;
     }
 
+    initPlayerVar = () => {
+        this.hands = [];
+        this.fold = false;
+        this.showhand = false;
+        this.betAtSH = 0;
+        this.potAtSH = 0;
+        this.playerBet = 0;
+    }
     Bet(bet) {
         this.playerBet += bet;
         this.funds -=bet;
