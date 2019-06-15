@@ -1,6 +1,7 @@
 var a = ['A', '6', 'D', 'B', '9', 'C'];
 var b = a.sort();
-console.log(numCodeArr(a.sort());
+a =a.concat(b)
+console.log(a);
 
 function numCodeArr(codeArr) {
     let result = codeArr.map(function(code) {

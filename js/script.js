@@ -224,60 +224,56 @@ function nextStage () {
         }
         console.log('player 2 bet is ' + game.players[2].playerBet);
     }
-    //? if real person fold or sh hand last stage end turn immediately
-    //! necessary?
-    // if ((!game.currentTurnIDArr.includes(2)) || player.showhand === true) {
-    //     game.showDealerCard();
-    //     game.getResults()
-    //     game.endTurn()
-    //     console.log('game turn end due to only gamer is inactive.');
-    // }
-    console.log('Current Stage is Stage ' + game.stageNum);
-    game.initTurnIndex();
-    console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
+    console.log("there are " + game.currentTurnIDArr.length + "players in current turn.");
+    //? if only 1 player, end game;
+    if (game.currentTurnIDArr.length <= 1) {
+        console.log('Only 1 player left, show dealer cards');
+        switch(game.stageNum) {
+            case 1:
+                showNextDealerCard(0,5);
+                break;
+            case 2:
+                showNextDealerCard(3,5);
+                break;
+            case 3:
+                showNextDealerCard(4,5);           
+        }
+        setTimeout(finishCurrTurn, 5000);
 
-    switch(game.stageNum) {
-        case 0:
-            console.log('After get hand cards. Start Bet');
-            askNextPlayerBet(); //! at the very end.
-            break;
-        case 1:
-            console.log('Show flop cards. Start bet');
-            showNextDealerCard(0, 3);
-            game.initTurnIndex();
-            setTimeout(askNextPlayerBet, 2800);
-            break
-        case 2:
-            console.log('Show turn card. Start bet');
-            showNextDealerCard(3,4);
-            game.initTurnIndex();
-            setTimeout(askNextPlayerBet, 2000);
+    } else {
+        console.log('Current Stage is Stage ' + game.stageNum);
+        game.initTurnIndex();
+        console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
+    
+        switch(game.stageNum) {
+            case 0:
+                console.log('After get hand cards. Start Bet');
+                askNextPlayerBet(); //! at the very end.
+                break;
+            case 1:
+                console.log('Show flop cards. Start bet');
+                showNextDealerCard(0, 3);
+                game.initTurnIndex();
+                setTimeout(askNextPlayerBet, 2800);
+                break
+            case 2:
+                console.log('Show turn card. Start bet');
+                showNextDealerCard(3,4);
+                game.initTurnIndex();
+                setTimeout(askNextPlayerBet, 2000);
+    
+                break;
+            case 3:
+                console.log('Show river card. Start bet');
+                showNextDealerCard(4,5);
+                game.initTurnIndex();
+                setTimeout(askNextPlayerBet, 2000);
+                break;        
+            case 4:
+                finishCurrTurn();
 
-            break;
-        case 3:
-            console.log('Show river card. Start bet');
-            showNextDealerCard(4,5);
-            game.initTurnIndex();
-            setTimeout(askNextPlayerBet, 2000);
-            break;        
-        case 4:
-            console.log('Show cards in hand. End turn');
-            if (game.currentTurnIDArr.length !== 1 || game.currentTurnIDArr[0] !== 2) {
-                for (let id of game.currentTurnIDArr) {
-                    if (id !== 2) {
-                        console.log('show cards of player ' + id);
-                        game.players[id].showCards();
-                    }
-                }
-            }
-            game.getResults(); //*passed
-            setTimeout(function(){
-                game.endTurn();
-                game.stageNum = 0;
-                resetCtlDivEl.classList.remove('hidden');
-                gameMsgEl.textContent = game.winmsg;                 
-                gameMsgDivEl.classList.remove('hidden');
-            }, 3000);
+    }
+
             
             
     }
@@ -286,6 +282,28 @@ function nextStage () {
     //     this.stageNum++;
     //     return;
     // }
+}
+
+function finishCurrTurn() {
+    console.log('Show cards in hand. End turn');
+    game.currentTurnIDArr = game.currentTurnIDArr.concat(game.currTurnSHPlayersID);
+    if (game.currentTurnIDArr.length !== 1 || game.currentTurnIDArr[0] !== 2) {
+        for (let id of game.currentTurnIDArr) {
+            if (id !== 2) {
+                console.log('show cards of player ' + id);
+                game.players[id].showCards();
+            }
+        }
+    }
+    console.log(game.currentTurnIDArr);
+    game.getResults(); //*passed
+    setTimeout(function () {
+        game.endTurn();
+        game.stageNum = 0;
+        resetCtlDivEl.classList.remove('hidden');
+        gameMsgEl.textContent = game.winmsg;
+        gameMsgDivEl.classList.remove('hidden');
+    }, 3000);
 }
 
 function askNextPlayerBet(delaycounter = 1) {
