@@ -100,7 +100,7 @@ class PokerGame {
     
     computerBet = (player) => {
         let betOptionCtl = Math.random();
-        console.log('current bet is ' + this.currentBet);;
+        console.log('current bet is ' + this.currentBet);
         
         //!test player controller;================================
         // if (this.players.indexOf(player) === 3) {
@@ -264,7 +264,7 @@ class PokerGame {
 
         console.log('call ' + call + ', raise ' + raise);
         let msg = 'Raise $' + raise;
-        player.popPlayerMsg('msg');
+        player.popPlayerMsg(msg);
         let amount = raise + call;
         player.Bet(amount);
         this.currentBet += raise;
