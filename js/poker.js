@@ -103,9 +103,9 @@ class PokerGame {
         console.log('current bet is ' + this.currentBet);;
         
         //!test player controller;================================
-        if (this.players.indexOf(player) === 3) {
-            this.showHands(player);
-        }
+        // if (this.players.indexOf(player) === 3) {
+        //     this.showHands(player);
+        // }
         //!=====================================================
 
         switch (true) {
