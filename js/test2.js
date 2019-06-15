@@ -1,7 +1,11 @@
 var a = ['A', '6', 'D', 'B', '9', 'C'];
 var b = a.sort();
-a =a.concat(b)
+a = a.concat(b)
 console.log(a);
+
+b = a.splice(0, 1);
+console.log(a);
+console.log(b);
 
 function numCodeArr(codeArr) {
     let result = codeArr.map(function(code) {

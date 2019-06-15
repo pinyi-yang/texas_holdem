@@ -75,10 +75,11 @@ main * {
     font-weight: none;
     font-size: 1vw;
     border-radius: 40%;
-    width: 40%;
+    min-width: 40%;
     text-align: center;
-    padding: 0.2vw;
+    padding: 0.3vw;
     opacity: 0;
+    
     /* border: black solid 2px; */
      
 }
@@ -96,7 +97,7 @@ main * {
     left: -42%;
 }
 .msgleft {
-    top: 10%;
+    top: 0%;
     right: -40%;
 }
 .msggamer {
@@ -207,6 +208,7 @@ main * {
     text-align: center;
     margin: auto;
     margin-top: 2%;
+    white-space: pre;
     /* animation: movein 5s ease; */
 }
 /* .gamemsg h1 {

@@ -37,11 +37,11 @@ var cards= [
     }
     ];
     var cards2 = [
-        {code: "AH", suit: "HEARTS", value: "ACE"},
+        {code: "0H", suit: "HEARTS", value: "10"},
         {code: "JH", suit: "HEARTS", value: "JACK"},
-        {code: "JD", suit: "DIAMONDS", value: "JACK"},
-        {code: "KC", suit: "CLUBS", value: "KING"},
-        {code: "9S", suit: "SPADES", value: "9"},
+        {code: "0D", suit: "DIAMONDS", value: "10"},
+        {code: "0C", suit: "CLUBS", value: "10"},
+        {code: "4S", suit: "SPADES", value: "4"},
         {code: "AD", suit: "DIAMONDS", value: "ACE"},
         {code: "QD", suit: "DIAMONDS", value: "QUEEN"}
         
@@ -139,9 +139,19 @@ function getHandRank(hand) {
         return [4, temp.join(''), 'Straight ' + NamCode(temp[0]) + ' high!'];
     }
 
+    //* three of a kind
     if (tk[0]) {
         temp = CodifyNumArr(tk[1]);
-        return [3, temp.join(''), 'Three of a Kind' + NamCode(temp[0]) + ' high!']
+        let i = 0;
+        let tempArr = codeKeys.reverse();
+        let resultArr = [];
+        while (i < tempArr.length && resultArr.length < 2) {
+            if (!temp.includes(tempArr[i])) {
+                resultArr.push(tempArr[i]);
+            }
+            i++
+        }
+        return [3, temp.join('') + resultArr.join(''), 'Three of a Kind ' + NamCode(temp[0]) + ' high with ' +NamCode(resultArr[0]) + ', ' + NamCode(resultArr[1])];
     }
 
     //* two pairs
@@ -150,11 +160,11 @@ function getHandRank(hand) {
         temp.sort().reverse().slice(0,2);
         let i = 0;
         let tempArr = codeKeys.reverse();
-            while (temp.includes(tempArr[i])) {
+        while (temp.includes(tempArr[i])) {
             i++
         }
         
-        return [2, temp.join('') + codeKeys[i], 'Two Pairs ' + NamCode(temp[0]) + ' ' + NamCode(temp[1]) + ' with ' + NamCode(codeKeys[i])];
+        return [2, temp.join('') + tempArr[i], 'Two Pairs ' + NamCode(temp[0]) + ' ' + NamCode(temp[1]) + ' with ' + NamCode(tempArr[i])];
     }
 
     //* one pair
@@ -162,9 +172,10 @@ function getHandRank(hand) {
         temp = CodifyNumArr(pair[1]);
         let tempArr = [];
         let i = 0;
+        let sortCodeArr = codeKeys.reverse();
         while (tempArr.length < 3 && i < codeKeys.length - 1) {
-            if (codeKeys.reverse()[i] !== temp[0]) {
-                tempArr.push(codeKeys.reverse()[i]);
+            if (sortCodeArr[i] !== temp[0]) {
+                tempArr.push(sortCodeArr[i]);
             }
             i++;
         }
@@ -317,6 +328,7 @@ function NamCode(code) {
             break;
         case "A":
             value = "10";
+            break;
         default:
             value = code;
     }

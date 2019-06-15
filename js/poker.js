@@ -29,7 +29,7 @@ class PokerGame {
         this.winnerHR = [-1,[]]
         this.winner;
         this.winnerid;
-        this.winmsg;
+        this.winmsg='';
         // this.updatePlayersFunds = this.updatePlayersFunds.bind(this);
         // this.startBlind = this.startBlind.bind(this);
         this.updatePlayersFunds = this.updatePlayersFunds.bind(this);
@@ -45,6 +45,7 @@ class PokerGame {
         this.currStageSHPlayers = [];
         this.currStageSHPlayersID = [];
         this.currentTurnIDArr = this.currentPlayerIDArr.slice(0);
+        this.winmsg ='';
         for (let player of this.players) {
             player.initPlayerVar();
             console.log(player);
@@ -135,8 +136,7 @@ class PokerGame {
     showHands = (player) => {
         //? update player.showhand, update playerBet
         console.log('player' + this.players.indexOf(player) + ' showhand');
-        player.msgEl.textContent = 'Show Hand!!!';
-        player.msgEl.classList.add('msgpop');
+        player.popPlayerMsg('Show Hand!!!');
         player.showhand = true;
         player.betAtSH = player.funds + player.playerBet - this.currentBet;
 
@@ -196,8 +196,7 @@ class PokerGame {
         let id = this.players.indexOf(player);
         console.log('player' + this.players.indexOf(player) + ' fold');
         player.fold = true;
-        player.msgEl.textContent = 'Fold!';
-        player.msgEl.classList.add('msgpop');
+        player.popPlayerMsg('Fold~~')
         player.handsEl.textContent ="";
 
         this.endTurnEarlyOrNot();
@@ -247,9 +246,7 @@ class PokerGame {
         player.Bet(bet);
         console.log('player' + this.players.indexOf(player) + ' call $' + bet);
         this.updateTotalBet(bet);
-        player.msgEl.textContent ='Call.'
-        player.msgEl.classList.add('msgpop');
-
+        player.popPlayerMsg('Call');
     }
 
     Raise = (player, bet = 0) => {
@@ -266,8 +263,8 @@ class PokerGame {
         }
 
         console.log('call ' + call + ', raise ' + raise);
-        player.msgEl.textContent = 'Raise $' + raise;
-        player.msgEl.classList.add('msgpop');
+        let msg = 'Raise $' + raise;
+        player.popPlayerMsg('msg');
         let amount = raise + call;
         player.Bet(amount);
         this.currentBet += raise;
@@ -321,7 +318,7 @@ class PokerGame {
             player.msgEl.classList.add('msgshow');
 
             //? check if the winner
-            if ( player.handRank[0] === this.winnerHR[0] && player.handRank[1] > this.winnerHR[1] ) {
+            if ( player.handRank[0] === this.winnerHR[0] && player.handRank[1] === this.winnerHR[1] ) {
                 this.winner.push(player);
                 this.winnerid.push(id);
             } else if ((player.handRank[0] > this.winnerHR[0]) || (player.handRank[0] === this.winnerHR[0] && player.handRank[1] > this.winnerHR[1])) {
@@ -337,7 +334,7 @@ class PokerGame {
 
     endTurn = () => {        
         //?update winner funds
-        let player 
+        let player; 
         if ( this.winner.length === 1 ) {
             player = this.winner[0];
             player.funds += this.pot;
@@ -449,9 +446,19 @@ class PokerGame {
             return [4, temp.join(''), 'Straight ' + this.NamCode(temp[0]) + ' high!'];
         }
     
+        //* three of a kind
         if (tk[0]) {
             temp = this.CodifyNumArr(tk[1]);
-            return [3, temp.join(''), 'Three of a Kind ' + this.NamCode(temp[0]) + ' high!']
+            let i = 0;
+            let tempArr = codeKeys.reverse();
+            let resultArr = [];
+            while (i < tempArr.length && resultArr.length < 2) {
+                if (!temp.includes(tempArr[i])) {
+                    resultArr.push(tempArr[i]);
+                }
+                i++
+            }
+            return [3, temp.join('') + resultArr.join(''), 'Three of a Kind ' + this.NamCode(temp[0]) + ' high with ' + this.NamCode(resultArr[0]) + ', ' + this.NamCode(resultArr[1])];
         }
     
         //* two pairs
@@ -464,7 +471,7 @@ class PokerGame {
                 i++
             }
             
-            return [2, temp.join('') + codeKeys[i], 'Two Pairs ' + this.NamCode(temp[0]) + ' ' + this.NamCode(temp[1]) + ' with ' + this.NamCode(codeKeys[i])];
+            return [2, temp.join('') + tempArr[i], 'Two Pairs ' + this.NamCode(temp[0]) + ' ' + this.NamCode(temp[1]) + ' with ' + this.NamCode(tempArr[i])];
         }
     
         //* one pair
@@ -629,6 +636,7 @@ class PokerGame {
                 break;
             case "A":
                 value = "10";
+                break;
             default:
                 value = code;
         }
@@ -682,6 +690,11 @@ class PokerPlayer {
         this.handsEl.appendChild(card0);
         this.handsEl.appendChild(card1);
         // console.log("player: " + this.handsEl);
+    }
+
+    popPlayerMsg(str) {
+        this.msgEl.textContent = str;
+        this.msgEl.classList.add('msgpop');
     }
 }
 

@@ -109,12 +109,27 @@ function nextTurn() {
         playerhand.textContent='';
         // console.log(playerhand);
     }
+    //* gamer out of funds
+    if (game.players[2].funds === 0 ) {
+        gameMsgEl.textContent = "GAME OVER: \r\n... You are out of funds! Try again!"
+        return;
+    }
+
     resetCtlDivEl.classList.add('hidden');
     gameMsgDivEl.classList.add('hidden');
     for (let element of playerMsgElArr) {
         element.classList.remove('msgshow');
     }
-    // betCtlDivEl.style.display = 'block';
+
+    //* take out players with no funds
+    for (let id of game.currentPlayerIDArr) {
+        if (game.players[id].funds <= 0) {
+            game.players[id].popPlayerMsg("I'm Out");
+            let index = game.currentPlayerIDArr.indexOf(id);
+            game.currentPlayerIDArr.splice(index, 1);
+        } 
+    }
+
     game.currentTurnIDArr = game.currentPlayerIDArr;
     // console.log(game.currentTurnIDArr);
     // console.log(game.players.length);
@@ -345,7 +360,7 @@ function askNextPlayerBet(delaycounter = 1) {
         game.computerBet(game.players[id]);
         game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
-        delaycounter++;
+        // delaycounter++;
         return askNextPlayerBet(delaycounter);
     }, 1200 * delaycounter);
 
