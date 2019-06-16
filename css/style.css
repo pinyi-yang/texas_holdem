@@ -110,6 +110,8 @@ main * {
     height: 80%;
     text-align: center;
     background: rgba(185, 185, 185, 0.719);
+    border-radius: 3px;
+    padding: 2px;
     
 }
 .playercards img {

@@ -53,14 +53,14 @@ class PokerGame {
         
     }
     startBlind = () => {
-        if (this.currentPlayerIDArr.includes(this.bigBlindID)) {
-            this.players[this.bigBlindID].Bet(1);
-        } else {
+        while (!this.currentPlayerIDArr.includes(this.bigBlindID)) {    
             this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
-            this.startBlind();
-            return;
-        }
-        
+        };
+
+        this.players[this.bigBlindID].Bet(1);
+        this.turnCurrIndex = this.bigBlindID;
+        this.turnStartIndex = this.bigBlindID;
+        this.turnEndIndex = this.getEndIndex(this.turnStartIndex);
         // console.log(this.bigBlindID,this.players[this.bigBlindID]);
         this.pot +=1;
         // console.log(this.currentTotalBet);
@@ -73,13 +73,17 @@ class PokerGame {
 
 
     smallBind = () => {
-        this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
-        console.log(this.bigBlindID);
-        this.players[this.bigBlindID].Bet(2);
+        let smallBindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
+        console.log('small blind is player' + smallBindID);
+        this.players[smallBindID].Bet(2);
         this.currentBet = 2;
         this.pot += 2;
         this.updateTotalBet();
         console.log('after blind, current bet is' + this.currentBet);
+
+        //* set  big blind ID for next Turn.
+        this.startBetID = this.bigBlindID;
+        this.bigBlindID = this.getNextPlayerID(this.currentPlayerIDArr, this.bigBlindID);
     }    
     
     //* get bet end index in cuurentTurnIDArr
@@ -87,7 +91,7 @@ class PokerGame {
         return startIndex === 0? this.currentTurnIDArr.length-1: startIndex -1;
     }
 
-    initTurnIndex = (startIndex = 0) => {
+    initTurnIndex = (startIndex = this.startBetID) => {
         //! no check showhand and fold. will check when each player showhand or fold
         
         //? get index at currentTurnIDArr
@@ -246,7 +250,7 @@ class PokerGame {
         player.Bet(bet);
         console.log('player' + this.players.indexOf(player) + ' call $' + bet);
         this.updateTotalBet(bet);
-        player.popPlayerMsg('Call');
+        player.popPlayerMsg('Check, $ ' + bet);
     }
 
     Raise = (player, bet = 0) => {
@@ -262,7 +266,7 @@ class PokerGame {
             raise = bet;
         }
 
-        console.log('call ' + call + ', raise ' + raise);
+        console.log('Player' + this.players.indexOf(player) + ' call ' + call + ', raise ' + raise);
         let msg = 'Raise $' + raise;
         player.popPlayerMsg(msg);
         let amount = raise + call;
@@ -401,8 +405,8 @@ class PokerGame {
         }
      
     
-        numKeys = Object.keys(numbercount); //*sorted, numArr
-        let codeKeys = this.CodifyNumArr(numKeys); //*sorted, codeArr
+        numKeys = Object.keys(numbercount); //*accent, numArr
+        let codeKeys = this.CodifyNumArr(numKeys); //*accent, codeArr
         straight = this.checkStraight(numKeys); //*decent, numArr passed
         flush = this.checkFlush(suitcount); //* passed, unsorted numArr;
 
@@ -412,11 +416,11 @@ class PokerGame {
         sf = this.checkStraight(flusharry); //* passed;
     
         if (sf[0]) {
-            if (sf[1][4] === 'E') {
-                return [9, this.CodifyNumArr(sf[1].reverse().join('')), 'Royal Flush, Ace high!']
+            if (sf[1][0] === '14') {
+                return [9, this.CodifyNumArr(sf[1]).reverse().join(''), 'Royal Flush, Ace high!']
             }
             else {
-                return [8, this.CodifyNumArr(sf[1].reverse().join('')), 'Straight Flush, ' + this.NamCode(sf[1][4]) + ' high!']
+                return [8, this.CodifyNumArr(sf[1]).reverse().join(''), 'Straight Flush, ' + this.NamCode(sf[1][0]) + ' high!']
             }
         }
     
@@ -477,16 +481,17 @@ class PokerGame {
         //* one pair
         if (pair[1].length === 1) {
             temp = this.CodifyNumArr(pair[1]);
-            let tempArr = [];
             let i = 0;
-            while (tempArr.length < 3 && i < codeKeys.length - 1) {
-                if (codeKeys.reverse()[i] !== temp[0]) {
-                    tempArr.push(codeKeys.reverse()[i]);
+            let tempArr = codeKeys.reverse();
+            let resultArr = [];
+            while (i < tempArr.length && resultArr.length < 3) {
+                if (!temp.includes(tempArr[i])) {
+                    resultArr.push(tempArr[i]);
                 }
-                i++;
+                i++
             }
             
-            return [1, temp.join('') + tempArr.sort().reverse().join(''), 'One Pair ' + this.NamCode(temp[0])];
+            return [1, temp.join('') + resultArr.join(''), 'One Pair ' + this.NamCode(temp[0]) + ' with ' + this.NamCode(resultArr[0]) + ', ' + this.NamCode(resultArr[1]) + ', ' + this.NamCode(resultArr[2])];
         }
     
         return [0, codeKeys.reverse().join(''), 'High Card'];    

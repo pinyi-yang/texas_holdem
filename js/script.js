@@ -146,7 +146,9 @@ function nextTurn() {
             
             //todo initiate game variable for each turn
             game.initiGameVar();
+//* =================Stage Control ================================
             game.stageNum = 0; //!!!stage controller
+    //*======================================================
             //? 1. big blind and small blind 
             //? 2. distribute card
             game.startBlind(); 
@@ -321,7 +323,7 @@ function finishCurrTurn() {
     }, 3000);
 }
 
-function askNextPlayerBet(delaycounter = 1) {
+function askNextPlayerBet(delay = 1000) {
     let id = game.currentTurnIDArr[game.turnCurrIndex]
     game.players[id].msgEl.textContent = '';
     game.players[id].msgEl.classList.remove('msgpop');
@@ -329,26 +331,28 @@ function askNextPlayerBet(delaycounter = 1) {
     game.players[id].msgEl.classList.add('selectplayer');
 
     
+    if (id === 2 && game.turnCurrIndex !== game.turnEndIndex) {
+        betCtlDivEl.classList.remove('hidden');
+        console.log("gamer's turn");
+        return;
+    }
 
     //? end of stage, all players finish bet 
-    if (game.turnCurrIndex === game.turnEndIndex && id !== 2) {
-        setTimeout(function() {
-            game.computerBet(game.players[id])
-        }, (delaycounter-1)*1200 + 600);
-        console.log('go to next stage');
+    if (game.turnCurrIndex === game.turnEndIndex) {
+        if (id !== 2 ) {
+            setTimeout(function() {
+                game.computerBet(game.players[id])
+                console.log('go to next stage');
+            }, delay + 1000);
+        }
         game.stageNum++;
         game.currStageSHPlayers = [];
-        return setTimeout(nextStage, 1200*delaycounter);
+        return setTimeout(nextStage, 2000 + delay);
        
     }
 
     // let id = game.currentTurnIDArr[turnCurrIndex];
     //? get to gamer, stop. game will control by buttons
-    if (id === 2) {
-        betCtlDivEl.classList.remove('hidden');
-        console.log("gamer's turn");
-        return;
-    }
 
     //? not gamer, computer will play
     //? don't do anything if player showHand
@@ -360,9 +364,9 @@ function askNextPlayerBet(delaycounter = 1) {
         game.computerBet(game.players[id]);
         game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
-        // delaycounter++;
-        return askNextPlayerBet(delaycounter);
-    }, 1200 * delaycounter);
+        delay += 1000;
+        return askNextPlayerBet();
+    }, 1000);
 
     
 }

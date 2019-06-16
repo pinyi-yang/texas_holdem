@@ -1,56 +1,29 @@
 //?string comparison
 var cards= [
-    {
-    code: "AD",
-    suit: "DIAMONDS",
-    value: "ACE",
-    },
-    {
-    code: "0D",
-    suit: "DIAMONDS",
-    value: "10",
-    },
-    {
-    code: "AD",
-    suit: "SPADE",
-    value: "JACK",
-    },
-    {
-    code: "3D",
-    suit: "DIAMONDS",
-    value: "3",
-    },
-    {
-    code: "KD",
-    suit: "DIAMONDS",
-    value: "KING",
-    },
-    {
-    code: "8H",
-    suit: "HEARTS",
-    value: "8",
-    },
-    {
-    code: "QD",
-    suit: "DIAMONDS",
-    value: "QUEEN",
-    }
+ {code: "JC", suit: "CLUBS", value: "JACK"},
+ {code: "4H", suit: "HEARTS", value: "4"},
+ {code: "8H", suit: "HEARTS", value: "8"},
+ {code: "5D", suit: "DIAMONDS", value: "5"},
+ {code: "AH", suit: "HEARTS", value: "ACE"},
+ {code: "KS", suit: "SPADES", value: "KING"},
+ {code: "4D", suit: "DIAMONDS", value: "4"}
+
     ];
     var cards2 = [
-        {code: "0H", suit: "HEARTS", value: "10"},
+        {code: "KH", suit: "HEARTS", value: "KING"},
         {code: "JH", suit: "HEARTS", value: "JACK"},
-        {code: "0D", suit: "DIAMONDS", value: "10"},
+        {code: "0H", suit: "HEARTS", value: "10"},
         {code: "0C", suit: "CLUBS", value: "10"},
         {code: "4S", suit: "SPADES", value: "4"},
-        {code: "AD", suit: "DIAMONDS", value: "ACE"},
-        {code: "QD", suit: "DIAMONDS", value: "QUEEN"}
+        {code: "AH", suit: "HEARTS", value: "ACE"},
+        {code: "QH", suit: "HEARTS", value: "QUEEN"}
         
     ];
 
-[suitcount, numcount] = getHandStat(cards2)
+[suitcount, numcount] = getHandStat(cards)
 console.log(suitcount);
 console.log(numcount);
-var result = getHandRank(cards2);
+var result = getHandRank(cards);
 console.log(result);
 
 function getHandRank(hand) {
@@ -94,22 +67,22 @@ function getHandRank(hand) {
     }
  
 
-    numKeys = Object.keys(numbercount); //*sorted, numArr
-    let codeKeys = CodifyNumArr(numKeys); //*sorted, codeArr
+    numKeys = Object.keys(numbercount); //*acccent, numArr
+    let codeKeys = CodifyNumArr(numKeys); //*accent, codeArr
     straight = checkStraight(numKeys); //*decent, numArr passed
     flush = checkFlush(suitcount); //* passed, unsorted numArr;
     //? sort flush[1]
     let flusharry = CodifyNumArr(flush[1]).sort();
     flusharry = numCodeArr(flusharry)
 
-    sf = checkStraight(flusharry); //* passed;
+    sf = checkStraight(flusharry); //* decent, num Arr, passed;
 
     if (sf[0]) {
-        if (sf[1][4] === 'E') {
-            return [9, CodifyNumArr(sf[1].reverse().join('')), 'Royal Flush, Ace high!']
+        if (sf[1][0] === '14') {
+            return [9, CodifyNumArr(sf[1]).join(''), 'Royal Flush, Ace high!']
         }
         else {
-            return [8, CodifyNumArr(sf[1].reverse().join('')), 'Straight Flush, ' + NamCode(sf[1][4]) + ' high!']
+            return [8, CodifyNumArr(sf[1]).join(''), 'Straight Flush, ' + NamCode(sf[1][0]) + ' high!']
         }
     }
 
@@ -164,23 +137,23 @@ function getHandRank(hand) {
             i++
         }
         
-        return [2, temp.join('') + tempArr[i], 'Two Pairs ' + NamCode(temp[0]) + ' ' + NamCode(temp[1]) + ' with ' + NamCode(tempArr[i])];
+        return [2, temp.join('') + tempArr[i], 'Two Pairs ' + NamCode(temp[0]) + ' ' + NamCode(temp[1]) + ' with ' + NamCode(tempArr[2])];
     }
 
     //* one pair
     if (pair[1].length === 1) {
         temp = CodifyNumArr(pair[1]);
-        let tempArr = [];
         let i = 0;
-        let sortCodeArr = codeKeys.reverse();
-        while (tempArr.length < 3 && i < codeKeys.length - 1) {
-            if (sortCodeArr[i] !== temp[0]) {
-                tempArr.push(sortCodeArr[i]);
+        let tempArr = codeKeys.reverse();
+        let resultArr = [];
+        while (i < tempArr.length && resultArr.length < 3) {
+            if (!temp.includes(tempArr[i])) {
+                resultArr.push(tempArr[i]);
             }
-            i++;
+            i++
         }
         
-        return [1, temp.join('') + tempArr.sort().reverse().join(''), 'One Pair ' + NamCode(temp[0])];
+        return [1, temp.join('') + resultArr.join(''), 'One Pair ' + NamCode(temp[0]) + ' with ' +NamCode(resultArr[0]) + ', ' + NamCode(resultArr[1]) + ', ' + NamCode(resultArr[2])];
     }
 
     return [0, codeKeys.reverse().join(''), 'High Card'];    
