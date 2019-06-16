@@ -332,7 +332,7 @@ function finishCurrTurn() {
     }, 3000);
 }
 
-function askNextPlayerBet(delay = 1000) {
+function askNextPlayerBet(delay = 2000) {
     let id = game.currentTurnIDArr[game.turnCurrIndex]
     game.players[id].msgEl.textContent = '';
     game.players[id].msgEl.classList.remove('msgpop');
