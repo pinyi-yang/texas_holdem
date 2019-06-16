@@ -207,10 +207,8 @@ main * {
     border-radius: 15px;
     z-index: 1;
     color: white;
-    text-align: center;
     margin: auto;
     margin-top: 2%;
-    white-space: pre;
     /* animation: movein 5s ease; */
 }
 /* .gamemsg h1 {
@@ -225,7 +223,6 @@ main * {
     width: 90%;
     margin: auto;
     height: 80%;
-    text-align: left;
     font-size: 1.6vw;
     color: black;
     padding: 0.2vw 0.5vw;
@@ -233,6 +230,7 @@ main * {
     border-radius: 5px;
     top: 8%;
     left: 3%;
+    white-space: pre-wrap;
 }
 
 @keyframes rotate {

@@ -12,7 +12,8 @@ class PokerGame {
         this.turnStartIndex;
         this.turnEndIndex;
         this.turnCurrIndex;
-        this.stageNum = 3;
+        this.lastPlayerRaised = false;
+        this.stageNum = 0;
         this.currStageSHPlayers = []; //show hand player at a stage. set to empty at end of each stage
         this.currTurnSHPlayersID = [];
         this.currentBet = 0; //! bet at current bet around
@@ -44,6 +45,7 @@ class PokerGame {
         this.stageNum = 0;
         this.currStageSHPlayers = [];
         this.currStageSHPlayersID = [];
+        this.currTurnSHPlayersID = [];
         this.currentTurnIDArr = this.currentPlayerIDArr.slice(0);
         this.winmsg ='';
         for (let player of this.players) {
@@ -91,15 +93,18 @@ class PokerGame {
         return startIndex === 0? this.currentTurnIDArr.length-1: startIndex -1;
     }
 
-    initTurnIndex = (startIndex = this.startBetID) => {
+    initTurnIndex = () => {
         //! no check showhand and fold. will check when each player showhand or fold
         
         //? get index at currentTurnIDArr
         // this.turnStartIndex = this.currentTurnIDArr.indexOf(this.startBetID);
-        this.turnStartIndex = startIndex;
+        if ( this.stageNum === 0 ) {
+            this.turnStartIndex = this.startBetID;
+            this.turnEndIndex = this.currentTurnIDArr.length-1
+        }
         this.turnCurrIndex = this.turnStartIndex;
+        this.turnEndIndex = this.getEndIndex(this.turnStartIndex);
         
-        this.turnEndIndex = this.currentTurnIDArr.length-1
     }
     
     computerBet = (player) => {
@@ -273,12 +278,18 @@ class PokerGame {
         player.Bet(amount);
         this.currentBet += raise;
         
+        //! due to the setup in askNxtPlayerBet. Last computer raise won't restart a turn.
+        if (this.turnCurrIndex === this.turnEndIndex) {
+            this.lastPlayerRaised = true;
+        }
+
         //* update player index
         this.turnStartIndex = this.turnCurrIndex;
         this.turnEndIndex = this.getEndIndex(this.turnCurrIndex);
         console.log('New bet turn start with player' + this.currentTurnIDArr[this.turnStartIndex] + '. end with player' + this.currentTurnIDArr[this.turnEndIndex]);      
         console.log('Current Players are ' + this.currentTurnIDArr);  
         this.updateTotalBet(amount); 
+
     }
 
 
