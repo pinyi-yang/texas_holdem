@@ -12,7 +12,7 @@ class PokerGame {
         this.turnStartIndex;
         this.turnEndIndex;
         this.turnCurrIndex;
-        this.lastPlayerRaised = false;
+        this.stageEnd = false;
         this.stageNum = 0;
         this.currStageSHPlayers = []; //show hand player at a stage. set to empty at end of each stage
         this.currTurnSHPlayersID = [];
@@ -42,6 +42,7 @@ class PokerGame {
     initiGameVar = () => {
         this.winnerHR = [-1,[]];
         this.currentBet = 0;
+        this.stageEnd = false;
         this.stageNum = 0;
         this.currStageSHPlayers = [];
         this.currStageSHPlayersID = [];
@@ -151,10 +152,13 @@ class PokerGame {
 
         if (player.betAtSH > 0) {
             this.currentBet += player.betAtSH;
+            this.stageEnd = false;
             //* renew index
             this.turnStartIndex = this.turnCurrIndex;
             this.turnEndIndex = this.getEndIndex(this.turnCurrIndex);
-            console.log('New bet turn start with player' + this.currentTurnIDArr[this.turnStartIndex] + '. end with player' + this.currentTurnIDArr[this.turnEndIndex]);      
+            console.log('New bet turn start with player' + this.currentTurnIDArr[this.turnStartIndex] + '. end with player' + this.currentTurnIDArr[this.turnEndIndex]);
+            //* will update current player id in the takeplayerout function
+            // this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;      
             console.log('Current Players are ' + this.currentTurnIDArr);  
         }
         
@@ -223,31 +227,77 @@ class PokerGame {
 
     takePlayerOut(player) {
         let id = this.players.indexOf(player);
-        let betEndPlayerID = this.currentTurnIDArr[this.turnEndIndex];
-        this.currentTurnIDArr.splice(this.currentTurnIDArr.indexOf(id), 1);
-        console.log('player' + this.players.indexOf(player) + ' out of game.');
-        console.log('current players are ' + this.currentTurnIDArr);
+        let takeOutIndex = this.currentTurnIDArr.indexOf(id);
+        // let betEndPlayerID = this.currentTurnIDArr[this.turnEndIndex];
+        let length = this.currentTurnIDArr.length;
+
         //? update start and end index
-        //? currIndex will increase 1 after bet
-        if (this.turnCurrIndex >= this.currentTurnIDArr.length || this.turnCurrIndex === 0) {
-            this.turnCurrIndex = this.currentTurnIDArr.length - 1;
-            console.log('next palyer is ' + this.currentTurnIDArr[0]);
-        }
-        else {
-            console.log('next palyer is ' + this.currentTurnIDArr[this.turnCurrIndex]);
-            this.turnCurrIndex--;
-        }
-        if (this.currentTurnIDArr.indexOf(betEndPlayerID) !== -1) {
-            //* fold player is not the last bet player
-            this.turnEndIndex = this.currentTurnIDArr.indexOf(betEndPlayerID); //? passed
-        }
-        else {
-            if (this.turnEndIndex >= this.currentTurnIDArr.length) {
-                //* player take out is last in IDArr.
-                this.turnEndIndex = this.currentTurnIDArr.length - 1;
+        //* E = endindex, S = startindex
+        //* [.........ES], 
+        if (this.turnStartIndex === this.currentTurnIDArr.length-1) {
+            //* curr = S
+            if (this.turnStartIndex === this.turnCurrIndex) {
+                this.turnCurrIndex = 0;
+                this.turnStartIndex = 0;
+            } else {
+                this.turnStartIndex--;
+                this.turnEndIndex--;
+            }
+        } else if (this.turnStartIndex === 0) {
+            //* [S ......... E]
+            //* curr = E
+            if ( this.turnCurrIndex === this.turnEndIndex ) {
+                this.turnCurrIndex = 0;
+            } 
+            this.turnEndIndex--;
+        } else if (this.turnEndIndex === 0 && this.turnCurrIndex === this.turnEndIndex) {
+            //* [ES........], curr = E
+            this.turnEndIndex = this.currentTurnIDArr.length-2;
+            this.turnCurrIndex = this.turnEndIndex;
+            this.turnStartIndex--;
+        } else if (this.turnCurrIndex <= this.turnEndIndex) {
+             //* [...curr..ES......], or curr === E;
+             if ( this.turnCurrIndex === this.turnEndIndex) {
+                 this.turnCurrIndex--;
+             }
+            this.turnStartIndex--;
+            this.turnEndIndex--;
+        } else if ( this.turnCurrIndex >= this.turnStartIndex ) {
+            //* [.....ES..curr...] 
+            if (this.turnCurrIndex === length-1) {
+                this.turnCurrIndex =0;
             }
         }
-        console.log('This turn will end at player' + this.currentTurnIDArr[this.turnEndIndex]);
+
+        //? take out player
+        console.log('Player' + this.currentTurnIDArr[takeOutIndex] + ' is out.');
+        this.currentTurnIDArr.splice(takeOutIndex, 1);
+        console.log('The remain players are ' + this.currentTurnIDArr);
+        console.log('Start with index' + this.turnStartIndex + '. End with index' + this.turnEndIndex + '. Next index is' + this.turnCurrIndex);
+
+        
+        // if (this.turnCurrIndex >= this.currentTurnIDArr.length || this.turnCurrIndex === 0) {
+        //     this.turnCurrIndex = this.currentTurnIDArr.length - 1;
+        //     console.log('next palyer is ' + this.currentTurnIDArr[0]);
+        // }
+        // else {
+        //     console.log('next palyer is ' + this.currentTurnIDArr[this.turnCurrIndex]);
+        //     this.turnCurrIndex--;
+        // }
+        // if (this.currentTurnIDArr.indexOf(betEndPlayerID) !== -1) {
+        //     //* fold player is not the last bet player
+        //     this.turnEndIndex = this.currentTurnIDArr.indexOf(betEndPlayerID); //? passed
+        // }
+        // else {
+        //     if (this.turnEndIndex >= this.currentTurnIDArr.length) {
+        //         //* player take out is last in IDArr.
+        //         this.turnEndIndex = this.currentTurnIDArr.length - 1;
+        //     }
+        // }
+        // console.log('This turn will end at player' + this.currentTurnIDArr[this.turnEndIndex]);
+        // this.currentTurnIDArr.splice(this.currentTurnIDArr.indexOf(id), 1);
+        // console.log('player' + this.players.indexOf(player) + ' out of game.');
+        // console.log('current players are ' + this.currentTurnIDArr);
     }
 
     Call = (player) => {
@@ -256,6 +306,7 @@ class PokerGame {
         console.log('player' + this.players.indexOf(player) + ' call $' + bet);
         this.updateTotalBet(bet);
         player.popPlayerMsg('Check, $ ' + bet);
+        this.turnCurrIndex < this.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
     }
 
     Raise = (player, bet = 0) => {
@@ -272,24 +323,20 @@ class PokerGame {
         }
 
         console.log('Player' + this.players.indexOf(player) + ' call ' + call + ', raise ' + raise);
+        this.stageEnd = false;
         let msg = 'Raise $' + raise;
         player.popPlayerMsg(msg);
         let amount = raise + call;
         player.Bet(amount);
         this.currentBet += raise;
         
-        //! due to the setup in askNxtPlayerBet. Last computer raise won't restart a turn.
-        if (this.turnCurrIndex === this.turnEndIndex) {
-            this.lastPlayerRaised = true;
-        }
-
         //* update player index
         this.turnStartIndex = this.turnCurrIndex;
         this.turnEndIndex = this.getEndIndex(this.turnCurrIndex);
-        console.log('New bet turn start with player' + this.currentTurnIDArr[this.turnStartIndex] + '. end with player' + this.currentTurnIDArr[this.turnEndIndex]);      
+        this.turnCurrIndex < game.currentTurnIDArr.length-1? this.turnCurrIndex++ : this.turnCurrIndex = 0;
+        console.log('New bet turn start with player' + this.currentTurnIDArr[this.turnStartIndex] + '. end with player' + this.currentTurnIDArr[this.turnEndIndex] + '. The next bet player is palyer' + this.currentTurnIDArr[this.turnCurrIndex]);      
         console.log('Current Players are ' + this.currentTurnIDArr);  
         this.updateTotalBet(amount); 
-
     }
 
 

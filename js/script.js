@@ -40,14 +40,18 @@ continueBtnEl.addEventListener('click', nextTurn);
 callBtnEl.addEventListener('click', function() {
     game.Call(game.players[2]);
     setTimeout(function() {
-        if (game.currentTurnIDArr[game.turnEndIndex] === 2) {
-        game.stageNum++;
-        nextStage() 
-    } else {
-        //* get to next player
-        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+        //* repalce by game.stageEnd
+    //     if (game.currentTurnIDArr[game.turnEndIndex] === 2) {
+    //     game.stageNum++;
+    //     nextStage() 
+    // } else {
+    // if (!game.stageEnd) {
+    //     //* get to next player
+    //     game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+    // }
+    console.log('Next be player is ' + game.currentTurnIDArr[game.turnCurrIndex]);
         askNextPlayerBet();
-    }
+    
     },600);
 
     betCtlDivEl.classList.add('hidden');
@@ -56,14 +60,15 @@ callBtnEl.addEventListener('click', function() {
 foldBtnEl.addEventListener('click', function() {
     game.Fold(game.players[2]);
     setTimeout(function() {
-    if (game.currentTurnIDArr[game.turnEndIndex] === 2) {
-        game.stageNum++;
-        nextStage() 
-    } else {
-        //* get to next player
-        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+    // if (game.currentTurnIDArr[game.turnEndIndex] === 2) {
+    //     game.stageNum++;
+    //     nextStage() 
+    // } else {
+    // if (!game.stageEnd) {
+    //     //* get to next player
+    //     game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+    // }
         askNextPlayerBet();
-    }
     },600);
     betCtlDivEl.classList.add('hidden');    
 });
@@ -215,12 +220,12 @@ function getCardsAPI() {
         });
 }
 
-function loopDelayFunction(func, currIDArray, delay, j = 0) {
+function loopDelayFunction(func, currIDArray, delay, j = currIDArray.indexOf(game.startBetID)) {
     for (var i = 0; i < currIDArray.length; i++) {
       (function (i) {
         setTimeout(function () {
-          func(currIDArray[j]);
-          j++;
+            func(currIDArray[j]);
+            j === currIDArray.length - 1 ? j = 0:j++; 
         }, delay * i);
       })(i);
     } ;
@@ -243,13 +248,8 @@ function nextStage () {
     }
     console.log("there are " + game.currentTurnIDArr.length + "players in current turn.");
 
-    //? if last player last stage raised
-    if (game.lastPlayerRaised) {
-        game.lastPlayerRaised = false;
-        askNextPlayerBet();
-        game.stageNum--;
-        return;
-    }
+    //? start new stage; reset
+    game.stageEnd = false;
 
     //? if only 1 player, end game;
     if (game.currentTurnIDArr.length <= 1) {
@@ -333,6 +333,17 @@ function finishCurrTurn() {
 }
 
 function askNextPlayerBet(delay = 2000) {
+    //* check whether current stage end
+    if (game.stageEnd) {
+        game.stageNum++;
+        game.currStageSHPlayers = [];
+        return setTimeout(nextStage, delay);
+    }
+
+    if (game.turnCurrIndex === game.turnEndIndex) {
+        game.stageEnd = true;
+    }
+
     let id = game.currentTurnIDArr[game.turnCurrIndex]
     game.players[id].msgEl.textContent = '';
     game.players[id].msgEl.classList.remove('msgpop');
@@ -346,19 +357,6 @@ function askNextPlayerBet(delay = 2000) {
         return;
     }
 
-    //? end of stage, all players finish bet 
-    if (game.turnCurrIndex === game.turnEndIndex) {
-        setTimeout(function() {
-            game.computerBet(game.players[id])
-            console.log('go to next stage');
-        }, delay + 2000);
-        
-        game.stageNum++;
-        game.currStageSHPlayers = [];
-        return setTimeout(nextStage, 3500 + delay);
-       
-    }
-
     // let id = game.currentTurnIDArr[turnCurrIndex];
     //? get to gamer, stop. game will control by buttons
 
@@ -370,11 +368,10 @@ function askNextPlayerBet(delay = 2000) {
         // game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
         // }
         game.computerBet(game.players[id]);
-        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
-        console.log(game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
-        delay += 2000;
+        // game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;
+        console.log('start, curr, end indexes: ', game.turnStartIndex, game.turnCurrIndex, game.turnEndIndex);
         return askNextPlayerBet();
-    }, 1000);
+    }, delay);
 
     
 }
@@ -408,7 +405,7 @@ function gamerRaise() {
             game.Raise(game.players[2], bet);
         
         }
-        game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;        
+        // game.turnCurrIndex < game.currentTurnIDArr.length-1? game.turnCurrIndex++ : game.turnCurrIndex = 0;        
         askNextPlayerBet();
         // game.currentTurnIDArr[game.turnEndIndex] === 2 ? nextStage() : askNextPlayerBet();
         betCtlDivEl.classList.add('hidden');
