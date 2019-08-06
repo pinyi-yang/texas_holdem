@@ -1,14 +1,30 @@
 html, body {
     margin: 0;
     padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
 }
+
+body {
+    background: url('../img/background.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+}
+
 
 header {
     text-align: center;
+    background: rgba(128, 128, 128, 0.795);
+    width: 400px;
+    margin:auto;
+    border-radius: 50px;
 }
 
-main * {
-    /* border: black solid 2px; */
+.title {
+    color: white;
+    font-weight: 800;
+    font-size: 35px;
+    margin: 10px 0;
+    padding: 0.6em 0;
 }
 
 #gameboard {
@@ -18,7 +34,7 @@ main * {
     position: relative;
     border: black solid 2px;
     border-radius: 10px;
-    background: darkolivegreen;
+    background: rgb(133, 170, 69);
     z-index: 0;
 
 }
