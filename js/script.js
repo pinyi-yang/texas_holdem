@@ -297,17 +297,9 @@ function nextStage () {
                 break;        
             case 4:
                 finishCurrTurn();
-
-    }
-
-            
-            
+        }
     }
     return;
-    // if (this.currentID === this.startBetID) {
-    //     this.stageNum++;
-    //     return;
-    // }
 }
 
 function finishCurrTurn() {

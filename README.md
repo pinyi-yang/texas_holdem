@@ -4,7 +4,7 @@
 * [Introduction](#Introduction)
 * [Development](#Development)
 * [Conclusion](#Conclusion)
-* [Under Developing](#Under-Developing)
+
 ## Introduction
 This is a desktop web based card game with one player and 4 computer. Currently, game info will refresh everytime when page load.
 
@@ -25,7 +25,7 @@ This is the open project 1 in my General Assembley Software Immersive Bootcamp. 
 ## Development
 Below are explanations for name used:
 * game: start from player with inital funds until he/she runs out fund after rounds.
-* turn: (bad name initially), it means round. Start with intial bet before get hand and end with show all shared cards on table or only one active player (not fold, showhand or out of funds) in this round.
+* turn: or round. Start with intial bet before get hand and end with show all shared cards on table or only one active player (not fold, showhand or out of funds) in this round.
 * stage: different phases in a round. often includes: blind, get hand, show flop, show turn, show river and check result. 
 * gamer: refers to real person player in game.
 * player: refers to either computer and gamer.
@@ -37,19 +37,15 @@ Below are explanations for name used:
 [interface]: ./readme_files/handdraft-UI.png
 [game_logic]: ./readme_files/handdraft-codeflow.png
 
-### Initial Plan
-The time span for the project is 4 days after experiencing Texas Holdem to get a better understanding on rules and game operation. Based on the hand draft on the interface, game flow control and winning mechanism. My initial schedule is:
-* Day 1: pokerAPI, HTML framework, game flow control
-* Day 2: game flow control
-* Day 3: Winning mechanism
-* Day 4: flexible (user experience, AI optional)
-
 ### Construct the Game Flow
-The actions in game are similar in each round (turn). To complete the game flow, construct a full flow for a round then repeat it each time is adequate. Within a round, there are two main functions need to complete - generating computer player activity and stage controller.
+From the Game Logic, it can be seen that a game has repetitive rounds. In rounds, they have different stages (blind, get hand, show flop, show turn, show river and check result). In each stage, players can check, fold and raise. Once flow for a game round  is constructred. It can be used again and again until the end of them game.
+However, the challenges are active players in a game and a game round is dependning on the player activity, and end of each stage is also depending on the player activity. Parameters must be set, and updated on every player activity.
+
+#### stage control
+
 
 #### computer player character and activity
 
-#### stage control
 
 
 
