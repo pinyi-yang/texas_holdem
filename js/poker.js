@@ -7,8 +7,8 @@ class PokerGame {
         this.lastID = 4;
         this.currentID = 0;
         this.currentPlayerIDArr = [0, 1, 2, 3, 4];
-        this.currentPlayerIDIndex = 0;
-        this.currentTurnIDArr = []; //nonfold players at current turn;
+        this.currentPlayerIDIndex = 0; //* 
+        this.currentTurnIDArr = []; //* nonfold players at current turn;
         this.turnStartIndex;
         this.turnEndIndex;
         this.turnCurrIndex;
