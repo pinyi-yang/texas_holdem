@@ -33,6 +33,7 @@ Below are explanations for name used:
 | Interface | Game Logic |
 | ----------------------- | ------------------------- |
 | ![interface][interface] | ![game logic][game_logic] |
+
 [interface]: ./readme_files/handdraft-UI.png
 [game_logic]: ./readme_files/handdraft-codeflow.png
 
