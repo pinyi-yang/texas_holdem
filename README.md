@@ -39,17 +39,56 @@ Below are explanations for name used:
 
 ### Construct the Game Flow
 From the Game Logic, it can be seen that a game has repetitive rounds. In rounds, they have different stages (blind, get hand, show flop, show turn, show river and check result). In each stage, players can check, fold and raise. Once flow for a game round  is constructred. It can be used again and again until the end of them game.
-However, the challenges are active players in a game and a game round is dependning on the player activity, and end of each stage is also depending on the player activity. Parameters must be set, and updated on every player activity.
+However, the challenges are active players in a game and a game round is dependning on the player activity, and end of each stage is also depending on the player activity. Parameters are set, and updated on every player activity.
+* currentPlayerIDArr: IDs of players in game (player with $0 will be move out. If gamer is moved, game will be end)
+* currentTurnIDArr: IDs of players in current game round (player fold or showhand will be moved out. If gamer is moved out, or only one player left, the game will automatic processed to the end)
+* players: array of player instance with game related info (cards, bet, fund...)of each player
+* ...other parameters for tracking bet, showhand, startbetplayer can be found the poker.js
 
-#### stage control
+### Stage Control
+Stage control of game is implemented with 3 main parameters: stageNum: number, stageEnd: boolean and below function:
+```javascript
+  // start script.js line 241
+  function nextStage() {
+    // check whether end should be end (if gamer is out or only one player)
+    {stage_control} { // image below
+      // let dealer show cards at corresponding stage
+      // check whether should ask player to play: 
+      askNextPlayerBet()
+      // Or compare the hand of players to get result:
+      finishCurrTurn()
+    } 
+  }
+```
+**{stage_control}**
+* showNextDealerCard(startCardIndex, endCardIndex): reveal dealer cards on board depending on the arguments.
+* initTurnIndex(): initiate index for the coming stage based on the tracking parameters mentioned above.
+* askNextPlayerBet(): check whether should go to next stage. if not, find the next player based on the tracking parameters, let them take acitivity (explained after). Notice a delay was set for this function. It will be explain further in Gamer Experience section.
+
+![stage_control](./readme_files/nextStage()_stage_control.png)
+
+**askNextPlayerBet()**
+* the function will decide whether the game should be processed to next stage by call nextStage() if condition (turnCurrIndex === turnEndIndex ) meets.
+* Or call computerBet() or show control penal for gamer if it is their turn. computerBet() is a function controls computer activity depding on their 'character' (see more in Computer Player Activity and Character section).
+* notice delays were also set when call these functions. This is also for game experience consideration (see more in Game Experience section)
+
+![askNextPlayerBet](./readme_files/askNextPlayerBet().png)
 
 
-#### computer player character and activity
 
+### Computer Player Activity and Character
+Computer acitivities (check, fold and raise) is triggered by askNextPlayerBet() above, and controlled by computerBet() (poker.js line 111). It will know which player is taking action by the player argument passed in which decided by the turnCurrIndex.
 
+**computerBet()**
+* Decide action based on the chip in hand and character of current player.
+* Right now, the character of current player is set to be identical by betOptionCtl and switch. It can be further refined by introduce new algorithm to obtain betOptionCtl to let computer be aggressive or comserative.
+* Based on the situation, computer will may fold, check, raise by call the corresponding functions: Fold(), Call() and Raise().
 
+![computerBet](./readme_files/computerBet().png)
 
-### Consider Gamer Experience
+### Game Experience
+As briefly mentioned above, for better game experience, time outs are introduced when some of the functions are called. This is because the sychronicity of javascripts. Functions in sync will happen at the same. It results when computer players take activities, they will complete simultaneously within 1s instead of what is showing in the preview that actions happend by turns. It is hard for gamer even for me to track what is going on. (Actually, I have to depend on my console log during development for a long time. That sucks). 
+In order to have a better experience, these delays and message pop are introduced.
 
 ### The Winning Algorithm
 
