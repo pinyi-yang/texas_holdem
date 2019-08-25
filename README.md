@@ -8,13 +8,10 @@
 <br>
 
 ## Introduction
-This is a desktop web based card game with one player and 4 computer. Currently, game info will refresh everytime when page load.
+This is a desktop web based card game with one player and 4 computer.
 
-### About Texas Holdem
-Texax Holdem is a popular card game with calculation and strategies. Each round a player will get 2 cards in hands, and 5 shared card showing on table with displaying 3 cards, 1 card and 1 card order. There are several stages in a round. At each stage, players can choos check, raise and fold their bet in this around. In the end, depending on the cards combination of each player, the player has the highest ranking combination wins the game and takes all the bets. For more information, please check [wiki](https://en.wikipedia.org/wiki/Texas_hold_%27em) and [WSOP](http://www.wsop.com/poker-games/texas-holdem/).
+Tech: Javascript, HTML, CSS and Github
 
-### Project Background
-This is the open project 1 in my General Assembley Software Immersive Bootcamp. The goal is to fully apply HTML, CSS and Javascript skills to develop a web application. After the self developing experience in hangman(link) and group developing experience in tic tac toe (link), I would like to further challenge and develop my skill with Texas Holdem.
 
 ### Preview of Final App
 | Start of game | End of game |
@@ -24,10 +21,12 @@ This is the open project 1 in my General Assembley Software Immersive Bootcamp. 
 [start]: ./readme_files/startgame15fps.gif
 [end]: ./readme_files/endgame15fps.gif
 
-### Built with
-* HTML, CSS, Javascript
-* Development Envirtonment: VS Code
-* Version Control: Github
+
+### About Texas Holdem
+Texax Holdem is a popular card game with calculation and strategies. Each round a player will get 2 cards in hands, and 5 shared card showing on table with displaying 3 cards, 1 card and 1 card order. There are several stages in a round. At each stage, players can choos check, raise and fold their bet in this around. In the end, depending on the cards combination of each player, the player has the highest ranking combination wins the game and takes all the bets. For more information, please check [wiki](https://en.wikipedia.org/wiki/Texas_hold_%27em) and [WSOP](http://www.wsop.com/poker-games/texas-holdem/).
+
+### Project Background
+This is the open project 1 in my General Assembley Software Immersive Bootcamp. The goal is to fully apply HTML, CSS and Javascript skills to develop a web application. After the self developing experience in hangman(link) and group developing experience in tic tac toe (link), I would like to further challenge and develop my skill with Texas Holdem.
 
 <br>
 
